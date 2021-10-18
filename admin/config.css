@@ -1,0 +1,72 @@
+#expd_config_page{
+  margin:30px;
+  text-align: left;
+}
+
+#expd_config_page form{
+  margin:0;
+}
+
+#expd_config_page h3,
+#expd_config_page h4{
+  margin:10 0px;
+  padding:0;
+  text-align: left;
+}
+
+#expd_options,
+#expd_notify_checkbox,
+#expd_save_config{
+  margin-top:30px;
+}
+
+#expd_options label{
+  display:table;
+  margin:5px 0;
+}
+
+#expd_config_page select{
+  background-color: #f8f8f8;
+  padding: 8px;
+  border-radius: 4px;
+  border-color: #DDD;
+}
+
+#expd_archive_album_choice{
+  display:none;
+  margin-top:30px;
+}
+
+#expd_archive_album_choice select{
+  width:100%;
+  background-color: #f8f8f8;
+  padding: 8px;
+  border-radius: 4px;
+  border-color: #DDD;
+  transition: ease 0.2s;
+  font-family: "Open Sans", "Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif;
+  display:inline-block;
+}
+
+
+#expd_archive_album_choice a{
+  background: #FFF;
+  border: 1px solid #787777a6;
+  box-shadow: none;
+  padding: 5px;
+  display:inline-block;
+}
+
+#expd_notify_checkbox p{
+  text-align: left;
+  margin:10px 0;
+}
+
+.icon-attention{
+  color:red;
+}
+
+input[type="radio"], 
+input[type="checkbox"]{
+  margin-right:5px;
+}

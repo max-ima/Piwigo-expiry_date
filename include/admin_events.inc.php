@@ -1,5 +1,5 @@
 <?php
-defined('expiry_date_PATH') or die('Hacking attempt!');
+defined('EXPIRY_DATE_PATH') or die('Hacking attempt!');
 
 /**
  * Add prefilter to picture modify trigger
@@ -16,7 +16,7 @@ function expd_loc_end_picture_modify()
   $template->assign(array('EXPIRY_DATE'=>$page['image']['expiry_date']));
 
   $template->set_prefilter('picture_modify', 'expd_picture_modify_prefilter');
-  $template->set_filename('expiry_date_picture_modify', realpath(expiry_date_PATH.'picture_modify.tpl'));
+  $template->set_filename('expiry_date_picture_modify', realpath(EXPIRY_DATE_PATH.'picture_modify.tpl'));
   $template->assign_var_from_handle('EXPD_PICTURE_MODIFY_CONTENT', 'expiry_date_picture_modify');
 }
 
@@ -74,7 +74,7 @@ function expd_loc_end_element_set_global()
 {
   global $template;
   $template->set_prefilter('batch_manager_global', 'expd_batch_manager_global');
-  $template->set_filename('expiry_date_expd_options', realpath(expiry_date_PATH.'batch_manager_global_filter_options.tpl'));
+  $template->set_filename('expiry_date_expd_options', realpath(EXPIRY_DATE_PATH.'batch_manager_global_filter_options.tpl'));
   $template->assign_var_from_handle('EXPD_OPTIONS_CONTENT', 'expiry_date_expd_options');
 }
 
@@ -159,7 +159,7 @@ function expd_element_set_global_add_action()
 {
   global $template, $page;
   
-  $template->set_filename('expiry_date', realpath(expiry_date_PATH.'batch_manager_global_action.tpl'));
+  $template->set_filename('expiry_date', realpath(EXPIRY_DATE_PATH.'batch_manager_global_action.tpl'));
 
   $template->assign(
     array(
@@ -175,4 +175,39 @@ function expd_element_set_global_add_action()
       'CONTENT' => $template->parse('expiry_date', true),
       )
     );
+}
+
+/**
+ * watch delete categories, notify admin if archive album is deleted
+ */
+function expd_delete_categories($ids)
+{
+  global $conf;
+
+  if ('archive' != $conf['expiry_date']['expd_action'])
+  {
+    return;
+  }
+
+  if (!isset($conf['expiry_date']['expd_archive_album']))
+  {
+    return;
+  }
+
+  $archive_album = $conf['expiry_date']['expd_archive_album'];
+  if (in_array($archive_album, $ids))
+  {
+    $subject = "Expiry date, archive album has been deleted";
+    $content = "The album you are using to archive photos with the expiry date plugin has been deleted.";
+    $content.= " "."Due to this, the action being taken on expiring photo has been reset to default: do nothing.";
+    
+    include_once(PHPWG_ROOT_PATH.'include/functions_mail.inc.php');
+
+    pwg_mail_notification_admins($subject, $content, false);
+
+    $conf['expiry_date']['expd_action'] = 'nothing';
+    $conf['expiry_date']['expd_archive_album'] = null;
+
+    conf_update_param('expiry_date',  $conf['expiry_date']);
+  }
 }
