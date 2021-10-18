@@ -74,10 +74,12 @@ class expiry_date_maintain extends PluginMaintain
    * Plugin uninstallation
    */
   function uninstall() 
-  {    
+  {
     // delete field
-    pwg_query('ALTER TABLE `'. IMAGES_TABLE .'` DROP `expiry_date`, DROP `expd_archive_date`;');
-    pwg_query('ALTER TABLE `'. CONFIG_TABLE .'` DROP `expiry_date`, DROP `expd_actio_taken`;');
+    pwg_query('ALTER TABLE `'. IMAGES_TABLE .'` DROP `expiry_date`, DROP `expd_archive_date`, DROP `expd_action_applied_on`;');
+
+    conf_delete_param('expiry_date');
+    conf_delete_param('expd_last_check');
   }
 
 }

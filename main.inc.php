@@ -54,37 +54,30 @@ function expiry_date_init()
   // prepare plugin configuration
   $conf['expiry_date'] = safe_unserialize($conf['expiry_date']);
 
-  list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
-
-  //set time between checks for expiring photos
-  $conf['expiry_date_check_period'] = 24*60*60;
+  // set time between checks for expiring photos (1 day by default)
+  $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 24*60*60);
 
   $check_expiration_date = false;
-  if (!isset($conf['expd_action_taken'])){
-    $check_expiration_date = true;
-  }
-  else
+  if (isset($conf['expd_last_check']))
   {
-    $conf['expiry_date_action_take'] = safe_unserialize($conf['expd_action_taken']);
-  
-    $datetime1 = new DateTime($conf['expiry_date_action_take'] );
-    $datetime2 = new DateTime($dbnow);
-    $interval = $datetime1->diff($datetime2);
-    $interval = $interval->format("%r%a");
-
-    echo('<pre>');print_r($interval);echo('</pre>');
-
-    if ($interval < $conf['expiry_date_check_period'])
+    if (strtotime($conf['expd_last_check']) < strtotime($conf['expiry_date_check_period'].' seconds ago'))
     {
       $check_expiration_date = true;
     }
-
+  }
+  else
+  {
+    $check_expiration_date = true;
   }
 
-  if ($check_expiration_date){
+  if ($check_expiration_date)
+  {
     load_language('plugin.lang', EXPIRY_DATE_PATH);
 
     expiry_date_init_actions();
+  
+    //set time last action taken on photos
+    conf_update_param('expd_last_check', date('c'));
   }
 }
 
@@ -94,8 +87,6 @@ function expiry_date_init()
 function expiry_date_init_actions()
 {
   global $conf;
-
-  list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   //Select all images with an expiry date before now (=expired)
   $query = '
@@ -151,6 +142,7 @@ SELECT
   $subject = "Expiry date, action has been taken";
   $content = "These images have reached expiration: ".implode(', ',$images);
   
+  list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   if ('delete' == $conf['expiry_date']['expd_action'])
   {
@@ -247,12 +239,6 @@ SELECT
       )
     );  
   } 
-  
-  //set time last action taken on photos
-  $conf['expd_action_taken'] = array(
-    'datetime' => $dbnow,
-  );
-  conf_update_param('expd_action_taken',  $conf['expd_action_taken'], true);
 }
 
 /*
