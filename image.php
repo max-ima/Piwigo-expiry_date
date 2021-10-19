@@ -12,7 +12,7 @@ function expd_loc_end_picture()
 
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
   
-  if(!isset($picture['current']['expiry_date'])){
+  if (!isset($picture['current']['expiry_date'])){
     return;
   }
 
@@ -25,7 +25,6 @@ function expd_loc_end_picture()
 
   $expiry_date = strftime('%A %d  %B %G', strtotime($picture['current']['expiry_date']));
   
-
   $template->assign(
     array	(
       'expiry_date' => $expiry_date,
@@ -50,7 +49,7 @@ function expd_picture_prefilter($content)
 	$replacement = 'id="info-content" class="d-flex flex-column">
 <div id="expd_expiry_date"" class="imageInfo">
   <dl class="row mb-0">
-    <dt class="col-sm-5">Expiry date</dt>
+    <dt class="col-sm-5">{`expd Expiry date`|@translate}</dt>
     <dd class="col-sm-7">{$expiry_date}, in {$days} days</dd>
   </dl>
 </div>

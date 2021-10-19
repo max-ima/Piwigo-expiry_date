@@ -51,10 +51,10 @@ $template->assign('notifyAction', $conf['expiry_date']['expd_notify']);
 $template->assign(
   'expd_actions_options',
   array(
-    'nothing' => 'Do nothing',
-    'delete' => 'Delete expired photos',
-    'archive' => 'Archive expired photos',
-  ),
+    'nothing' => l10n('Do nothing'),
+    'delete' => l10n('Delete expired photos'),
+    'archive' => l10n('Archive expired photos'),
+  )
 );
 
 $template->assign(array(

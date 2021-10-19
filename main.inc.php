@@ -51,6 +51,8 @@ function expiry_date_init()
 {
   global $conf;
 
+  load_language('plugin.lang', EXPIRY_DATE_PATH);
+
   // prepare plugin configuration
   $conf['expiry_date'] = safe_unserialize($conf['expiry_date']);
 
@@ -72,7 +74,7 @@ function expiry_date_init()
 
   if ($check_expiration_date)
   {
-    load_language('plugin.lang', EXPIRY_DATE_PATH);
+
 
     expiry_date_init_actions();
   
@@ -139,14 +141,14 @@ SELECT
   include_once(PHPWG_ROOT_PATH.'include/functions_mail.inc.php');
 
   //set email content to notify admins expiriation action has taken place
-  $subject = "Expiry date, action has been taken";
-  $content = "These images have reached expiration: ".implode(', ',$images);
+  $subject = get_l10n_args("Expiry date, action has been taken");
+  $content = get_l10n_args("These images have reached expiration:")." ".implode(', ',$images);
   
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   if ('delete' == $conf['expiry_date']['expd_action'])
   {
-    $content.= " "." Therefore these images have been deleted";
+    $content.= " ".get_l10n_args(" Therefore these images have been deleted");
     //notify admins that expired photos have been deleted
     pwg_mail_notification_admins($subject, $content, false);
 
@@ -155,7 +157,7 @@ SELECT
   }
   else if ('archive' == $conf['expiry_date']['expd_action'] and isset($conf['expiry_date']['expd_archive_album']) )
   {
-    $content.= " "." Therefore these images have been archived in album #".$conf['expiry_date']['expd_archive_album'];
+    $content.= " ".get_l10n_args("Therefore these images have been archived in album #").$conf['expiry_date']['expd_archive_album'];
     //notify admins that expired photos have been moved
     pwg_mail_notification_admins($subject, $content, false);
 
@@ -185,7 +187,7 @@ SELECT
   }
   else
   {
-    $content.= " "." No action was taken on these images.";
+    $content.= " ".get_l10n_args("No action was taken on these images.");
     //notify admins that expired photos have been deleted
     pwg_mail_notification_admins($subject, $content, false);
 
@@ -233,8 +235,8 @@ SELECT
     pwg_mail(
       $users[$user_id],
       array(
-        'subject' => 'You have expiring photos',
-        'content' => 'You have recieved this email because you previously downloaded these photos: '.$image_info.'These photo have reached their expiry date.',
+        'subject' => get_l10n_args('You have expiring photos'),
+        'content' => get_l10n_args('You have recieved this email because you previously downloaded these photos:').' '.$image_info.get_l10n_args('These photo have reached their expiry date.'),
         'content_format' => 'text/plain',
       )
     );  

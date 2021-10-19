@@ -1,5 +1,5 @@
 <p>
-  <strong>{"Expiry date"|translate}</strong>
+  <strong>{"expd Expiry date"|translate}</strong>
   <br>
   <input type="hidden" name="expiry_date" value="{$EXPIRY_DATE}">
   <label class="date-input">

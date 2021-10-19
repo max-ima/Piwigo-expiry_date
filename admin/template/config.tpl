@@ -52,29 +52,29 @@ function showDiv(divId, element){
 
     <div id="expd_options">
       <div id="expd_action_select">
-        <label for="expd_actions"><strong>What should piwigo do once photos expire?</strong></label>
+        <label for="expd_actions"><strong>{'What should piwigo do once photos expire'|translate}</strong></label>
 {html_radios name=expd_actions options=$expd_actions_options selected=$selectedAction onchange="showDiv('expd_archive_album_choice', this)"}
       </div>
     </div>
 
     <div id="expd_archive_album_choice" {if $selectedAction != 'archive'}style="display:none;"{else}style="display:block;"{/if}>
-        <label><strong>Where should Piwigo move archived photos?</strong></label>
+        <label><strong>{'Where should Piwigo move archived photos'|translate}</strong></label>
         <br>
-        <select data-selectize="categories" data-default="" data-value="{$selected_category|@json_encode|escape:html}" name="selected_category"  placeholder="{'Select an album... or type it!'|@translate}"></select>
+        <select data-selectize="categories" data-default="" data-value="{$selected_category|@json_encode|escape:html}" name="selected_category"  placeholder="{'Select an album... or type it!'|translate}"></select>
     </div>
 
 
     <div id="expd_notify_checkbox">
-        <label><strong>Should users be notified of expiring photos?</strong></label><br>
+        <label><strong>{'Should users be notified of expiring photos'|translate}</strong></label><br>
         <input type="checkbox" id="expd_notify" name="expd_notify" value="notify"  {if $notifyAction}checked{/if}>
-        <label for="expd_notify" class="tiptip" title="">Notify users of photo expiration. <br><i>This will send a email, on the expiry date, to notify anyone who has downloaded the photo that it is expiring.</i></label>
-        <p><i class="icon-attention"></i> A user will be notified of an expiring photo only if their visit history is saved.
-        <br>To change this setting go to: Configuration - Options - Miscellaneous - Save visits in history for</p>
+        <label for="expd_notify" class="tiptip" title="">{'Notify users of photo expiration'|translate}<br><i>{'This will send a email, on the expiry date, to notify anyone who has downloaded the photo that it is expiring'|translate}</i></label>
+        <p><i class="icon-attention"></i>{'A user will be notified of an expiring photo only if their visit history is saved'|translate}
+        <br>{'To change this setting go to'|translate}: {'Configuration'|translate} &raquo; {'Options'|translate} &raquo; {'General'|translate} &raquo; {'Miscellaneous'|translate} &raquo; {'Save visits in history for'|translate}</p>
     </div> 
 
     <div id="expd_save_config">
       <input type="hidden" name="pwg_token" value="{$PWG_TOKEN}">
-      <input class="submit" type="submit" value="{'Save Settings'|@translate}" name="submit">
+      <input class="submit" type="submit" value="{'Save Settings'|translate}" name="submit">
     </div>
 
   </form>
