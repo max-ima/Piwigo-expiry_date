@@ -1,7 +1,8 @@
 <?php
-$lang['Expiry date'] ='Expiry date';
+$lang['Expiry date'] ='Date d\'expiration';
 
 // Batch manager
+$lang['Expiring photos'] = 'Photos expirées';
 $lang['Expires in'] ='Expires dans';
 $lang['the past (already expired)'] = 'le passé (déjà expiré)';
 $lang['less than %s days'] ='Moins que %s jours';
@@ -22,13 +23,13 @@ $lang['Archive expired photos'] = 'Archiver les photos expirés';
 
 //email if archive album was deleted
 $lang['Expiry date, action has been taken'] = 'Date d\'expiration, des mesures ont été prises';
-$lang['These images have reached expiration:'] = 'Ces images sont arrivées à expiration :';
-$lang['Therefore these images have been archived in album #'] = 'Par conséquent, ces images ont été archivées dans l\'album #';
+$lang['These images have reached expiration: %s']= 'Ces images sont arrivées à expiration : %s';
+$lang['Therefore these images have been archived in album # %s'] = 'Par conséquent, ces images ont été archivées dans l\'album # %s';
 $lang['No action was taken on these images'] = 'Aucune mesure n\'a été prise sur ces images.';
 
 //email users if photos expire
 $lang['You have expiring photos'] = 'Vous avez des photos expirées.';
-$lang['You have recieved this email because you previously downloaded these photos:'] = 'Vous avez reçu cet e-mail car vous avez précédemment téléchargé ces photos :';
-$lang['These photo have reached their expiry date'] = 'Ces photos ont atteint leur date d\'expiration.';
+$lang['You have recieved this email because you previously downloaded these photos: %s'] = 'Vous avez reçu cet e-mail car vous avez précédemment téléchargé ces photos : %s';
+$lang['These photo have reached their expiry date.'] = 'Ces photos ont atteint leur date d\'expiration.';
 
 ?>
