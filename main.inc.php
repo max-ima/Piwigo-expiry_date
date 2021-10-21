@@ -2,7 +2,7 @@
 /*
 Plugin Name: Expiry Date
 Version: auto
-Description: Set an expiry date on photos. This plugin adds a field to the edit photo page and allows you to set an expiry date. In the batch manager you can filter photos to see which ones are expiring soon and handle the appropriately.
+Description: Set an expiry date on photos. Apply an automatic action when photos expire.
 Plugin URI:
 Author: HWFord
 Author URI: https://github.com/HWFord
@@ -87,7 +87,7 @@ function expiry_date_init()
  */
 function expiry_date_init_actions()
 {
-  global $conf;
+  global $conf, $user;
 
   //Select all images with an expiry date before now (=expired)
   $query = '
@@ -136,12 +136,21 @@ SELECT
     }
   
     $users = query2array($query, 'id', 'email');
+
+    $query = '
+SELECT
+    user_id,
+    language
+  FROM '.USER_INFOS_TABLE.'
+  WHERE user_id IN ('.implode(',', $user_ids).')
+;';
+    $language_of_user = query2array($query, 'user_id', 'language');
   }
 
   include_once(PHPWG_ROOT_PATH.'admin/include/functions.php');
   include_once(PHPWG_ROOT_PATH.'include/functions_mail.inc.php');
 
-  //set email content to notify admins expiriation action has taken place
+  //set email content to notify admins expiration action has taken place
   $subject = get_l10n_args("Expiry date, action has been taken");
   $keyargs_content = array(
     get_l10n_args("These images have reached expiration: %s", implode(', ',$images)),
@@ -157,24 +166,61 @@ SELECT
         get_l10n_args("Therefore these images have been deleted."),
       )
     );
-    
-    //notify admins that expired photos have been deleted
-    pwg_mail_notification_admins($subject, $keyargs_content, false);
 
     //Delete expired photos
     delete_elements($image_ids, true);
+
+    // let's update activities to show it's a deletion on expiry date
+    $query = '
+SELECT
+    *
+  FROM '.ACTIVITY_TABLE.'
+  WHERE action = \'delete\'
+    AND object = \'photo\'
+    AND object_id IN ('.implode(',', $image_ids).')
+;';
+    $activities = query2array($query);
+    $updates = array();
+    foreach ($activities as $activity)
+    {
+      $details = unserialize($activity['details']);
+      $details['script'] = 'expiry_date';
+
+      $updates[] = array(
+        'activity_id' => $activity['activity_id'],
+        'details' => serialize($details),
+      );
+    }
+
+    if (count($updates) > 0)
+    {
+      mass_updates(
+        ACTIVITY_TABLE,
+        array(
+          'primary' => array('activity_id'),
+          'update' => array('details'),
+        ),
+        $updates
+      );
+    }
   }
   else if ('archive' == $conf['expiry_date']['expd_action'] and isset($conf['expiry_date']['expd_archive_album']) )
   {
-    $archive_album = $conf['expiry_date']['expd_archive_album'];
+    $cat_info = get_cat_info($conf['expiry_date']['expd_archive_album']);
+    $cat_names = array();
+    foreach ($cat_info['upper_names'] as $upper_cat)
+    {
+      $cat_names[] = $upper_cat['name'];
+    }
+    $cat_fullname = implode($conf['level_separator'], $cat_names);
+
     array_push(
-      $keyargs_content, array(
+      $keyargs_content,
+      array(
         get_l10n_args('', ''),
-        get_l10n_args("Therefore these images have been archived in album # %s", $conf['expiry_date']['expd_archive_album']),
+        get_l10n_args("Therefore these images have been archived in album %s", $cat_fullname),
       )
     );
-    //notify admins that expired photos have been moved
-    pwg_mail_notification_admins($subject, $keyargs_content, false);
 
     //Move expired images
     move_images_to_categories($image_ids, array($conf['expiry_date']['expd_archive_album']));
@@ -199,12 +245,61 @@ SELECT
       ),
       $datas
     );
+
+    $random_key = generate_key(10);
+
+    pwg_activity('photo', $image_ids, 'move', array('expiry_date_key'=>$random_key));
+
+    // let's update activities to show it's a deletion on expiry date
+    $query = '
+SELECT
+    *
+  FROM '.ACTIVITY_TABLE.'
+  WHERE action = \'move\'
+    AND object = \'photo\'
+    AND object_id IN ('.implode(',', $image_ids).')
+;';
+    $activities = query2array($query);
+    $updates = array();
+    foreach ($activities as $activity)
+    {
+      $details = unserialize($activity['details']);
+
+      if (!isset($details['expiry_date_key']) or $details['expiry_date_key'] != $random_key)
+      {
+        continue;
+      }
+      $details['script'] = 'expiry_date';
+      $details['archived_in'] = $conf['expiry_date']['expd_archive_album'];
+      unset($details['expiry_date_key']);
+
+      $updates[] = array(
+        'activity_id' => $activity['activity_id'],
+        'details' => serialize($details),
+      );
+    }
+
+    if (count($updates) > 0)
+    {
+      mass_updates(
+        ACTIVITY_TABLE,
+        array(
+          'primary' => array('activity_id'),
+          'update' => array('details'),
+        ),
+        $updates
+      );
+    }
   }
   else
   {
-    $content.= " ".get_l10n_args("No action was taken on these images.");
-    //notify admins that expired photos have been deleted
-    pwg_mail_notification_admins($subject, $keyargs_content, false);
+    array_push(
+      $keyargs_content,
+      array(
+        get_l10n_args('', ''),
+        get_l10n_args("No action was taken on these images.")
+      )
+    );
 
     //remove expiry date so action is not done again, addd archive date
     $datas = array();
@@ -227,6 +322,12 @@ SELECT
       $datas
     );
   }
+
+  // notify admins
+  $current_user_id = $user['id'];
+  $user['id'] = -1; // make sure even the current user will get notified
+  pwg_mail_notification_admins($subject, $keyargs_content, false);
+  $user['id'] = $current_user_id;
 
   if (!isset($conf['expiry_date']['expd_notify']))
   {
@@ -253,14 +354,25 @@ SELECT
       get_l10n_args("These photo have reached their expiry date."),
     );
 
+    $recipient_language = get_default_language();
+    if ( isset($language_of_user[$user_id]))
+    {
+      $recipient_language = $language_of_user[$user_id];
+    }
+
+    switch_lang_to($recipient_language);
+    $subject = l10n('You have expiring photos');
+    $content = l10n_args($keyargs_content);
+    switch_lang_back();
+
     pwg_mail(
       $users[$user_id],
       array(
-        'subject' => l10n('You have expiring photos'),
-        'content' => l10n_args($keyargs_content),
+        'subject' => $subject,
+        'content' => $content,
         'content_format' => 'text/plain',
       )
-    );  
+    );
   } 
 }
 

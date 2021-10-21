@@ -14,25 +14,15 @@ jQuery(document).ready(function() {
     rootUrl: '{$ROOT_URL}'
   });
   
-  var associated_categories = {$associated_categories|@json_encode};
+  categoriesCache.selectize(jQuery('[data-selectize=categories]'));
 
-  categoriesCache.selectize(jQuery('[data-selectize=categories]'), {
-    {* filter: function(categories, options) {
-      if (this.name == 'dissociate') {
-        var filtered = jQuery.grep(categories, function(cat) {
-          return !!associated_categories[cat.id];
-        });
+  function toggleNotifyDetails() {
+    jQuery('.expd_notify_checkbox_details').toggle(jQuery('#expd_notify').is(":checked"));
+  }
 
-        if (filtered.length > 0) {
-          options.default = filtered[0].id;
-        }
-
-        return filtered;
-      }
-      else {
-        return categories;
-      }
-    } *}
+  toggleNotifyDetails();
+  jQuery('#expd_notify').change(function(){
+    toggleNotifyDetails();
   });
 });
 
@@ -65,11 +55,16 @@ function showDiv(divId, element){
 
 
     <div id="expd_notify_checkbox">
-        <label><strong>{'Should users be notified of expiring photos'|translate}</strong></label><br>
-        <input type="checkbox" id="expd_notify" name="expd_notify" value="notify"  {if $notifyAction}checked{/if}>
-        <label for="expd_notify" class="tiptip" title="">{'Notify users of photo expiration'|translate}<br><i>{'This will send a email, on the expiry date, to notify anyone who has downloaded the photo that it is expiring'|translate}</i></label>
-        <p><i class="icon-attention"></i>{'A user will be notified of an expiring photo only if their visit history is saved'|translate}
-        <br>{'To change this setting go to'|translate}: {'Configuration'|translate} &raquo; {'Options'|translate} &raquo; {'General'|translate} &raquo; {'Miscellaneous'|translate} &raquo; {'Save visits in history for'|translate}</p>
+        <label>
+          <input type="checkbox" id="expd_notify" name="expd_notify" value="notify" {if $notifyAction}checked{/if}>
+          {'Notify downloaders of photo expiration'|translate}
+        </label>
+
+        <p class="expd_notify_checkbox_details">
+          <i>{'On the expiry date, an email will be sent to notify anyone who has downloaded the photo.'|translate}</i>
+          <br><i class="icon-attention"></i>{'Piwigo knows if a user has downloaded the photo only if their visit history is saved.'|translate}
+          <br>{'To change this setting go to:'|translate} {'Configuration'|translate} &raquo; {'Options'|translate} &raquo; {'General'|translate} &raquo; {'Miscellaneous'|translate} &raquo; {'Save visits in history for'|translate}
+        </p>
     </div> 
 
     <div id="expd_save_config">

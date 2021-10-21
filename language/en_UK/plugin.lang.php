@@ -9,13 +9,12 @@ $lang['less than %s days'] ='Less than %s days';
 $lang['remove expiry date'] = 'remove expiry date';
 
 // config.tpl
-$lang['What should piwigo do once photos expire'] = 'What should piwigo do once photos expire?';
+$lang['What should piwigo do once photos expire'] = 'What should Piwigo do once photos expire?';
 $lang['Where should Piwigo move archived photos'] = 'Where should Piwigo move archived photos?';
-$lang['Should users be notified of expiring photos'] = 'Should users be notified of expiring photos?';
-$lang['Notify users of photo expiration'] = 'Notify users of photo expiration.';
-$lang['This will send a email, on the expiry date, to notify anyone who has downloaded the photo that it is expiring'] = 'This will send a email, on the expiry date, to notify anyone who has downloaded the photo that it is expiring.';
-$lang['A user will be notified of an expiring photo only if their visit history is saved'] = 'A user will be notified of an expiring photo only if their visit history is saved.';
-$lang['To change this setting go to'] = 'To change this setting go to';
+$lang['Notify downloaders of photo expiration'] = 'Notify downloaders of photo expiration';
+$lang['On the expiry date, an email will be sent to notify anyone who has downloaded the photo.'] = 'On the expiry date, an email will be sent to notify anyone who has downloaded the photo.';
+$lang['Piwigo knows if a user has downloaded the photo only if their visit history is saved.'] = 'Piwigo knows if a user has downloaded the photo only if their visit history is saved.';
+$lang['To change this setting go to:'] = 'To change this setting go to:';
 $lang['You must select an album for archiving photos'] = 'You must select an album for archiving photos';
 $lang['Do nothing'] = 'Do nothing';
 $lang['Delete expired photos'] = 'Delete expired photos';

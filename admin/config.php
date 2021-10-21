@@ -39,8 +39,14 @@ if (!empty($_POST))
 
 //Get default values for options from config
 $template->assign('selectedAction', $conf['expiry_date']['expd_action']);
-$template->assign('selected_category',array($conf['expiry_date']['expd_archive_album']));
 $template->assign('notifyAction', $conf['expiry_date']['expd_notify']);
+
+$selected_category = array();
+if (isset($conf['expiry_date']['expd_archive_album']))
+{
+  $selected_category = array($conf['expiry_date']['expd_archive_album']);
+}
+$template->assign('selected_category', $selected_category);
 
 
 // +-----------------------------------------------------------------------+
