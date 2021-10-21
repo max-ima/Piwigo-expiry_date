@@ -5,7 +5,7 @@ $lang['Expiry date'] ='Date d\'expiration';
 $lang['Expiring photos'] = 'Photos expirées';
 $lang['Expires in'] ='Expires dans';
 $lang['the past (already expired)'] = 'le passé (déjà expiré)';
-$lang['less than %s days'] ='Moins que %s jours';
+$lang['less than %s days'] ='Moins de %s jours';
 $lang['remove expiry date'] = 'supprimer la date d\'expiration';
 
 // config.tpl
