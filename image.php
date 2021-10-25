@@ -49,7 +49,7 @@ function expd_picture_prefilter($content)
 	$replacement = 'id="info-content" class="d-flex flex-column">
 <div id="expd_expiry_date"" class="imageInfo">
   <dl class="row mb-0">
-    <dt class="col-sm-5">{`expd Expiry date`|@translate}</dt>
+    <dt class="col-sm-5">{\'Expiry date\'|@translate}</dt>
     <dd class="col-sm-7">{$expiry_date}, in {$days} days</dd>
   </dl>
 </div>
