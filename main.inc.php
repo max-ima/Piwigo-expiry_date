@@ -114,7 +114,7 @@ SELECT user_id, image_id
   WHERE image_id IN ('.implode(',',$image_ids).')
     AND image_type = \'high\'
 ;';
-  
+
     $history_lines = query2array($query);
     $user_history = array();
   
@@ -125,26 +125,30 @@ SELECT user_id, image_id
   
     $user_ids = array_keys($user_history);
 
-    if(!empty($user_ids)){
+    if (!empty($user_ids))
+    {
       $query = '
 SELECT 
     '.$conf['user_fields']['id'].' AS id,
     '.$conf['user_fields']['email'].' AS email
   FROM '.USERS_TABLE.'
   WHERE '.$conf['user_fields']['id'].' IN ('.implode(',',$user_ids).')
+    AND `'.$conf['user_fields']['email'].'` IS NOT NULL
 ;';
-    }
-  
-    $users = query2array($query, 'id', 'email');
+      $email_of_user = query2array($query, 'id', 'email');
 
-    $query = '
+      if (count($email_of_user) > 0)
+      {
+        $query = '
 SELECT
     user_id,
     language
   FROM '.USER_INFOS_TABLE.'
   WHERE user_id IN ('.implode(',', $user_ids).')
 ;';
-    $language_of_user = query2array($query, 'user_id', 'language');
+        $language_of_user = query2array($query, 'user_id', 'language');
+      }
+    }
   }
 
   include_once(PHPWG_ROOT_PATH.'admin/include/functions.php');
@@ -336,7 +340,7 @@ SELECT
 
   foreach ($user_history as $user_id => $user_image_ids)
   {
-    if (!isset($users[$user_id]))
+    if (!isset($email_of_user[$user_id]))
     {
       continue;
     }
@@ -355,7 +359,7 @@ SELECT
     );
 
     $recipient_language = get_default_language();
-    if ( isset($language_of_user[$user_id]))
+    if (isset($language_of_user[$user_id]))
     {
       $recipient_language = $language_of_user[$user_id];
     }
@@ -366,7 +370,7 @@ SELECT
     switch_lang_back();
 
     pwg_mail(
-      $users[$user_id],
+      $email_of_user[$user_id],
       array(
         'subject' => $subject,
         'content' => $content,
