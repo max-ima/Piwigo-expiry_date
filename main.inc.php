@@ -3,7 +3,7 @@
 Plugin Name: Expiry Date
 Version: auto
 Description: Set an expiry date on photos. Apply an automatic action when photos expire.
-Plugin URI:
+Plugin URI: https://piwigo.org/ext/extension_view.php?eid=920
 Author: HWFord
 Author URI: https://github.com/HWFord
 Has Settings: true
