@@ -23,12 +23,6 @@ class expiry_date_maintain extends PluginMaintain
       pwg_query('ALTER TABLE `'.IMAGES_TABLE.'` ADD `expiry_date` DATETIME;');
     }
 
-    $result = pwg_query('SHOW COLUMNS FROM `'.IMAGES_TABLE.'` LIKE "expd_archive_date" ');
-    if (!pwg_db_num_rows($result))
-    {
-      pwg_query('ALTER TABLE `'.IMAGES_TABLE.'` ADD `expd_archive_date` DATETIME;');
-    }
-
     $result = pwg_query('SHOW COLUMNS FROM `'.IMAGES_TABLE.'` LIKE "expd_action_applied_on" ');
     if (!pwg_db_num_rows($result))
     {
@@ -76,7 +70,7 @@ class expiry_date_maintain extends PluginMaintain
   function uninstall() 
   {
     // delete field
-    pwg_query('ALTER TABLE `'. IMAGES_TABLE .'` DROP `expiry_date`, DROP `expd_archive_date`, DROP `expd_action_applied_on`;');
+    pwg_query('ALTER TABLE `'. IMAGES_TABLE .'` DROP `expiry_date`, DROP `expd_action_applied_on`;');
 
     conf_delete_param('expiry_date');
     conf_delete_param('expd_last_check');

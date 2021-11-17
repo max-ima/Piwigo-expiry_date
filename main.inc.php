@@ -229,7 +229,7 @@ SELECT
     //Move expired images
     move_images_to_categories($image_ids, array($conf['expiry_date']['expd_archive_album']));
     
-    //remove expiry date so action is not done again, addd archive date
+    //remove expiry date so action is not done again, add action applied on date
     $datas = array();
 
     foreach ($image_ids as $image_id)
@@ -237,7 +237,7 @@ SELECT
       $datas[] = array(
         'id' => $image_id,
         'expiry_date' => null,
-        'expd_archive_date' => $dbnow,
+        'expd_action_applied_on' => $dbnow,
         );
     }
 
@@ -245,7 +245,7 @@ SELECT
       IMAGES_TABLE,
       array(
         'primary' => array('id'),
-        'update' => array('expiry_date', 'expd_archive_date'),
+        'update' => array('expiry_date', 'expd_action_applied_on'),
       ),
       $datas
     );
@@ -254,7 +254,7 @@ SELECT
 
     pwg_activity('photo', $image_ids, 'move', array('expiry_date_key'=>$random_key));
 
-    // let's update activities to show it's a deletion on expiry date
+    // let's update activities to show it's archived on expiry date
     $query = '
 SELECT
     *
