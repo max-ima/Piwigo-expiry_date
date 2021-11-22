@@ -18,10 +18,15 @@ jQuery(document).ready(function() {
 
   function toggleNotifyDetails() {
     jQuery('.expd_notify_checkbox_details').toggle(jQuery('#expd_notify').is(":checked"));
+    jQuery('.expd_notify_admin_checkbox_details').toggle(jQuery('#expd_notify_admin').is(":checked"));
   }
 
   toggleNotifyDetails();
   jQuery('#expd_notify').change(function(){
+    toggleNotifyDetails();
+  });
+  
+  jQuery('#expd_notify_admin').change(function(){
     toggleNotifyDetails();
   });
 });
@@ -60,11 +65,34 @@ function showDiv(divId, element){
           {'Notify downloaders of photo expiration'|translate}
         </label>
 
-        <p class="expd_notify_checkbox_details">
-          <i>{'On the expiry date, an email will be sent to notify anyone who has downloaded the photo.'|translate}</i>
-          <br><i class="icon-attention"></i>{'Piwigo knows if a user has downloaded the photo only if their visit history is saved.'|translate}
-          <br>{'To change this setting go to:'|translate} {'Configuration'|translate} &raquo; {'Options'|translate} &raquo; {'General'|translate} &raquo; {'Miscellaneous'|translate} &raquo; {'Save visits in history for'|translate}
-        </p>
+        <div class="expd_notify_checkbox_details">
+          <p>
+            <i>{'On the expiry date, an email will be sent to notify anyone who has downloaded the photo.'|translate}</i>
+            <br><i class="icon-attention"></i>{'Piwigo knows if a user has downloaded the photo only if their visit history is saved.'|translate}
+            <br>{'To change this setting go to:'|translate} {'Configuration'|translate} &raquo; {'Options'|translate} &raquo; {'General'|translate} &raquo; {'Miscellaneous'|translate} &raquo; {'Save visits in history for'|translate}
+          </p>
+          <div>
+            <p>Notify users before the expiry date :
+            <br><i>A set number of days before a email will be sent to notifiy that photos are expiring in the futur</i></p>
+            {html_options name=expd_notify_before_option options=$expd_prenotification_options selected=$notifyActionBeforeOption}
+          </div>
+        </div>
+    </div> 
+
+    <div id="expd_notify_admin_checkbox">
+        <label>
+          <input type="checkbox" id="expd_notify_admin" name="expd_notify_admin" value="notify_admins" {if $notifyActionAdmin}checked{/if}>
+          Notify admins of photo expiration
+        </label>
+
+        <div class="expd_notify_admin_checkbox_details">
+          <i>On the expiry date, an email will be sent to all admins</i>
+          <div>
+            <p>Notify admins before the expiry date :
+            <br><i>A set number of days before a email will be sent to notifiy that photos are expiring in the futur</i></p>
+            {html_options name=expd_admin_notify_before_option options=$expd_prenotification_options selected=$notifyActionAdminBeforeOption}
+          </div>
+        </div>
     </div> 
 
     <div id="expd_save_config">

@@ -23,6 +23,9 @@ if (!empty($_POST))
     'expd_action' => $_POST['expd_actions'],
     'expd_archive_album' => $_POST['selected_category'],   
     'expd_notify' => isset($_POST["expd_notify"]) ? true : false,
+    'expd_notify_before_option'=> $_POST['expd_notify_before_option'],
+    'expd_notify_admin' => isset($_POST["expd_notify_admin"]) ? true : false,
+    'expd_notify_admin_before_option'=> $_POST['expd_admin_notify_before_option'],  
   );
   
   if (null == $_POST['selected_category'] and 'archive' == $_POST['expd_actions'])
@@ -40,6 +43,9 @@ if (!empty($_POST))
 //Get default values for options from config
 $template->assign('selectedAction', $conf['expiry_date']['expd_action']);
 $template->assign('notifyAction', $conf['expiry_date']['expd_notify']);
+$template->assign('notifyActionBeforeOption', $conf['expiry_date']['expd_notify_before_option']);
+$template->assign('notifyActionAdmin', $conf['expiry_date']['expd_notify_admin']);
+$template->assign('notifyActionAdminBeforeOption', $conf['expiry_date']['expd_notify_admin_before_option']);
 
 $selected_category = array();
 if (isset($conf['expiry_date']['expd_archive_album']))
@@ -60,6 +66,16 @@ $template->assign(
     'nothing' => l10n('Do nothing'),
     'delete' => l10n('Delete expired photos'),
     'archive' => l10n('Archive expired photos'),
+  )
+);
+
+$template->assign(
+  'expd_prenotification_options',
+  array(
+    'none' => 'No prenotification',
+    '7' => '7 days before expiry',
+    '14' => '14 days before expiry',
+    '30' => '30 days before expiry',
   )
 );
 

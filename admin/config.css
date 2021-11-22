@@ -37,6 +37,10 @@
   margin-top:30px;
 }
 
+#expd_notify_admin_checkbox{
+  margin-top:30px;
+}
+
 #expd_archive_album_choice select{
   width:100%;
   background-color: #f8f8f8;
@@ -57,7 +61,8 @@
   display:inline-block;
 }
 
-#expd_notify_checkbox p{
+#expd_notify_checkbox p,
+#expd_notify_admin_checkbox p{
   text-align: left;
   margin:10px 0;
 }
