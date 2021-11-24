@@ -65,9 +65,26 @@ SELECT
     return;
   }
 
+  $query = '
+  SELECT type, user_id, image_id 
+  FROM '.$prefixeTable.'expd_notifications
+  ;';
+  
+  $result = pwg_query($query);
+  
+  $notifications_sent = array();
+  
+  while ($row = pwg_db_fetch_assoc($result))
+  {
+    array_push($notifications_sent,$row);
+  }
+  echo('<pre>');print_r($notifications_sent);echo('</pre>');
+  echo('<pre>');print_r($admin_emails);echo('</pre>');
+
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   $notification_history = array();
+  $image_to_notify = 0;
 
   foreach ($admin_ids as $admin_id)
   {
@@ -79,6 +96,18 @@ SELECT
     foreach ($imagesDetails as $image)
     {
       echo('<pre>image :');print_r($image);echo('</pre>');
+      $notification_being_sent = array (
+        "type" => 'prenotification_admin_'.$conf['expiry_date']['expd_notify_admin_before_option'],
+        "user_id" => $admin_id,
+        "image_id" =>$image['id'],
+      );
+      echo('<pre>notification being sent :');print_r($notification_being_sent);echo('</pre>');
+
+      if (in_array($notification_being_sent, $notifications_sent))
+      {
+        continue;
+      }
+
       $image_info.= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
 
       $notification_history[] = array(
@@ -88,10 +117,16 @@ SELECT
         'send_date' => $dbnow,
         'email_used' => $admin_emails[$admin_id],
       );
+      $image_to_notify++; 
 
     }
 
     $image_info .= "\n\n";
+  }
+
+  if ($image_to_notify == 0)
+  {
+    return;
   }
 
   // notify admins on expiration
@@ -201,6 +236,20 @@ WHERE user_id IN ('.implode(',', $user_ids).')
     }
   }
 
+  $query = '
+SELECT type, user_id, image_id 
+FROM '.$prefixeTable.'expd_notifications
+;';
+
+  $result = pwg_query($query);
+
+  $notifications_sent = array();
+
+  while ($row = pwg_db_fetch_assoc($result))
+  {
+    array_push($notifications_sent,$row);
+  }
+
   // echo('<pre>');print_r($notifications_sent);echo('</pre>');
 
   $notification_history = array();
@@ -212,6 +261,7 @@ WHERE user_id IN ('.implode(',', $user_ids).')
       continue;
     }
 
+    $image_to_notify = 0;
 
     $recipient_language = get_default_language();
     if (isset($language_of_user[$user_id]))
@@ -243,6 +293,7 @@ WHERE user_id IN ('.implode(',', $user_ids).')
           continue;
         } 
 
+        $image_to_notify++;  
 
         $image_info.= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
          
@@ -256,6 +307,11 @@ WHERE user_id IN ('.implode(',', $user_ids).')
         
       }
       $image_info = "\n\n";
+    }
+
+    if ($image_to_notify == 0)
+    {
+      continue;
     }
   
     $subject = l10n('Expiry date, These images will expire');
