@@ -66,13 +66,13 @@ function expd_picture_prefilter($content)
 <div id="expd_expiry_date"" class="imageInfo">
   <dl class="row mb-0">
     <dt class="col-sm-5">{\'Expiry date\'|@translate}</dt>
-    <dd class="col-sm-7">{$expiry_date}, in {$expd_days} days</dd>
+    <dd class="col-sm-7">{$expiry_date}, {\'in\'|@translate} {$expd_days} days</dd>
   </dl>
 </div>
 {/if}
 
 {if isset($expired_on_date)}
-<div id="expd_expiry_date"" class="imageInfo">
+<div id="expd_expired_on_date"" class="imageInfo">
   <dl class="row mb-0">
     <dt class="col-sm-5">{\'expired on\'|@translate}</dt>
     <dd class="col-sm-7">{$expired_on_date}</dd>

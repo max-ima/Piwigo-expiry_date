@@ -1,5 +1,7 @@
 <?php
 $lang['Expiry date'] ='Date d\'expiration';
+$lang['expired on'] ='Expiré le';
+$lang['in'] ='dans';
 
 // Batch manager
 $lang['Expiring photos'] = 'Photos expirées';
