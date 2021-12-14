@@ -7,7 +7,7 @@ include_once(PHPWG_ROOT_PATH.'admin/include/functions.php');
 /**
  * Send prenotifications to admins
  */
-function sendPrenotificationsAdmin()
+function send_prenotifications_admin()
 {
   global $conf, $user, $prefixeTable;
 
@@ -21,14 +21,22 @@ function sendPrenotificationsAdmin()
 
   // select all images expiring in X days for admin prenotif
   $query = '
-SELECT id, file, name, author, expiry_date
+SELECT
+    id,
+    file,
+    name,
+    author,
+    expiry_date
   FROM '.IMAGES_TABLE.'
-  WHERE ADDDATE(expiry_date, INTERVAL -'.$conf['expiry_date']['expd_notify_admin_before_option'].' DAY) > NOW()
+  WHERE expiry_date BETWEEN ADDDATE(NOW(), INTERVAL 2 DAY) AND ADDDATE(NOW(), INTERVAL '.$conf['expiry_date']['expd_notify_admin_before_option'] . ' DAY);
 ;';
+
+// echo('<pre>');print_r($query);echo('</pre>');
 
   $result = pwg_query($query);
 
   $imagesDetails = array();
+  $image_ids = array();
 
   while ($row = pwg_db_fetch_assoc($result))
   {
@@ -37,6 +45,7 @@ SELECT id, file, name, author, expiry_date
     $limitprenotification = strtotime("-2days", strtotime($row['expiry_date']));
     $row['limit_prenotification'] = $limitprenotification;
     array_push($imagesDetails,$row);
+    array_push($image_ids, $row['id']);
   }
 
   if (empty($imagesDetails))
@@ -66,50 +75,53 @@ SELECT
   }
 
   $query = '
-  SELECT type, user_id, image_id 
-  FROM '.$prefixeTable.'expd_notifications
+SELECT
+    image_id, user_id
+  FROM '.EXPIRY_DATE_NOTIFICATIONS_TABLE.'
+  WHERE send_date > SUBDATE(NOW(), INTERVAL '.$conf['expiry_date']['expd_notify_admin_before_option'].' DAY)
+    AND image_id IN ('.implode(',', $image_ids).')
+    AND type = \'prenotification_admin_'.$conf['expiry_date']['expd_notify_admin_before_option'].'\'
   ;';
   
-  $result = pwg_query($query);
+  // echo('<pre>');print_r($query);echo('</pre>');
   
-  $notifications_sent = array();
+  // echo('<pre>');print_r($notifications_sent);echo('</pre>');
   
-  while ($row = pwg_db_fetch_assoc($result))
+  $notifications_sent = query2array($query, "user_id", "image_id");
+
+  if (empty($notifications_sent))
   {
-    array_push($notifications_sent,$row);
+    return;
   }
-  echo('<pre>');print_r($notifications_sent);echo('</pre>');
-  echo('<pre>');print_r($admin_emails);echo('</pre>');
 
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   $notification_history = array();
   $image_to_notify = 0;
 
-  foreach ($admin_ids as $admin_id)
-  {
-    echo('<pre>');print_r("admin id:  ".$admin_id);echo('</pre>');
-
-    $image_info = "\n\n";
-    echo('<pre> images:');print_r($imagesDetails);echo('</pre>');
+// echo('<pre>notification being sent :');print_r($notifications_sent);echo('</pre>');
     
-    foreach ($imagesDetails as $image)
-    {
-      echo('<pre>image :');print_r($image);echo('</pre>');
-      $notification_being_sent = array (
-        "type" => 'prenotification_admin_'.$conf['expiry_date']['expd_notify_admin_before_option'],
-        "user_id" => $admin_id,
-        "image_id" =>$image['id'],
-      );
-      echo('<pre>notification being sent :');print_r($notification_being_sent);echo('</pre>');
+  foreach ($imagesDetails as $image)
+  {
 
-      if (in_array($notification_being_sent, $notifications_sent))
+    if (isset($notifications_sent[$image['id']]))
       {
         continue;
       }
 
-      $image_info.= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
+    // echo('<pre>notification being sent :');print_r($notification_being_sent);echo('</pre>');
 
+    if (isset($notifications_sent[$image['id']]) )
+    {
+      continue;
+    }
+
+    $image_info = "\n\n";
+    $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
+    $image_info .= "\n\n";
+
+    foreach ($admin_ids as $admin_id)
+    {
       $notification_history[] = array(
         'type' => 'prenotification_admin_'.$conf['expiry_date']['expd_notify_admin_before_option'],
         'user_id' =>  $admin_id,
@@ -155,7 +167,7 @@ SELECT
  * $user_email for notification history
  */
 
-function sendPrenotificationsUser()
+function send_prenotifications_user()
 {
   global $conf, $prefixeTable;
 
@@ -169,9 +181,14 @@ function sendPrenotificationsUser()
 
   // select all images expiring in X days for user prenotif
   $query = '
-SELECT id, file, name, author, expiry_date
+SELECT
+    id,
+    file,
+    name,
+    author,
+    expiry_date
   FROM '.IMAGES_TABLE.'
-  WHERE ADDDATE(expiry_date, INTERVAL -'.$conf['expiry_date']['expd_notify_before_option'].' DAY) > NOW()
+  WHERE expiry_date BETWEEN ADDDATE(NOW(), INTERVAL 2 DAY) AND ADDDATE(NOW(), INTERVAL '.$conf['expiry_date']['expd_notify_before_option'].' DAY);
 ;';
 
   $result = pwg_query($query);
@@ -187,10 +204,9 @@ SELECT id, file, name, author, expiry_date
     $row['limit_prenotification'] = $limitprenotification;
     array_push($imagesDetails,$row);
     array_push($image_ids,$row['id']);
-
   }
 
-  if (empty($image_ids))
+  if (empty($imagesDetails))
   {
     return;
   }
@@ -207,7 +223,7 @@ SELECT user_id, image_id
           
   foreach ($history_lines as $history_line)
   {
-    @$user_history[ $history_line['user_id'] ][ $history_line['image_id'] ]++;
+    @$user_history[$history_line['user_id']][$history_line['image_id']]++;
   }
 
   $user_ids = array_keys($user_history);
@@ -237,22 +253,26 @@ WHERE user_id IN ('.implode(',', $user_ids).')
   }
 
   $query = '
-SELECT type, user_id, image_id 
-FROM '.$prefixeTable.'expd_notifications
+SELECT
+    image_id,
+    user_id,
+    send_date
+  FROM '.EXPIRY_DATE_NOTIFICATIONS_TABLE.'
+  WHERE send_date > SUBDATE(NOW(), INTERVAL '.$conf['expiry_date']['expd_notify_before_option'].' DAY)
+    AND image_id IN ('.implode(',', $image_ids).')
+    AND type = \'prenotification_'.$conf['expiry_date']['expd_notify_before_option'].'\'
 ;';
-
   $result = pwg_query($query);
-
   $notifications_sent = array();
-
-  while ($row = pwg_db_fetch_assoc($result))
-  {
-    array_push($notifications_sent,$row);
+  while ($row = pwg_db_fetch_assoc($result)) {
+    $notifications_sent[$row['image_id'] . '_' . $row['user_id']] = $row['send_date'];
   }
+  // echo('<pre>');print_r($querey);echo('</pre>');
 
   // echo('<pre>');print_r($notifications_sent);echo('</pre>');
 
   $notification_history = array();
+  list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   foreach ($user_history as $user_id => $user_image_ids)
   {
@@ -274,13 +294,7 @@ FROM '.$prefixeTable.'expd_notifications
     $image_info = "\n\n";
     foreach (array_keys($user_image_ids) as $user_image_id)
     {
-      $notification_being_sent = array (
-        "type" => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
-        "user_id" => $user_id,
-        "image_id" =>$user_image_id,
-      );
-
-      if (in_array($notification_being_sent, $notifications_sent))
+      if (isset($notifications_sent[$user_image_id.'_'.$user_id]))
       {
         continue;
       }
@@ -304,11 +318,11 @@ FROM '.$prefixeTable.'expd_notifications
           'send_date' => $dbnow,
           'email_used' => $email_of_user[$user_id],
         );
-        
       }
       $image_info = "\n\n";
     }
 
+    // echo ('<pre>');print_r($image_info);echo ('</pre>');
     if ($image_to_notify == 0)
     {
       continue;
@@ -331,11 +345,9 @@ FROM '.$prefixeTable.'expd_notifications
     );
   } 
 
-
   //add notification to notification history
   if (count($notification_history) > 0)
   {
-    addNotificationHistory($notification_history);
+    add_notification_history($notification_history);
   }
-
 }
