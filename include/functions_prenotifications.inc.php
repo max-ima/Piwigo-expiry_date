@@ -171,12 +171,8 @@ SELECT user_id, image_id
     @$user_history[$history_line['user_id']][$history_line['image_id']]++;
   }
 
-  echo('<pre> history_lines');print_r($history_lines);echo('</pre>');
-  echo('<pre> user_history');print_r($user_history);echo('</pre>');
-
   $user_ids = array_keys($user_history);
        
-  echo('<pre> user_ids');print_r($user_ids);echo('</pre>');
   if (empty($user_ids))
   {
     return;
@@ -192,8 +188,6 @@ WHERE '.$conf['user_fields']['id'].' IN ('.implode(',',$user_ids).')
 ;';
 
   $email_of_user = query2array($query, 'id', 'email');
-
-  echo('<pre> email_of_user');print_r($email_of_user);echo('</pre>');
       
   if (count($email_of_user) < 0)
   {
@@ -208,8 +202,7 @@ WHERE user_id IN ('.implode(',', $user_ids).')
 ;';
 
   $language_of_user = query2array($query, 'user_id', 'language');
-  echo('<pre> language_of_user');print_r($language_of_user);echo('</pre>');
-  
+
   $query = '
 SELECT
     image_id,
@@ -231,19 +224,13 @@ SELECT
   while ($row = pwg_db_fetch_assoc($result)) {
     $notifications_sent[$row['image_id'].'_'.$row['user_id']] = $row['send_date'];
   }
-  echo('<pre> notifications_sent');print_r($notifications_sent);echo('</pre>');
-  
+
   foreach ($user_history as $user_id => $user_image_ids)
   {
     if (!isset($email_of_user[$user_id]))
     {
       continue;
     }
-
-    // echo('<pre> email_of_user');print_r($email_of_user);echo('</pre>');
-    // echo('<pre> user_id');print_r($user_id);echo('</pre>');
-
-
       
     $recipient_language = get_default_language();
     if (isset($language_of_user[$user_id]))
@@ -254,16 +241,13 @@ SELECT
     switch_lang_to($recipient_language);
 
     $image_info = "\n\n";
-    // echo('<pre> user_image_ids');print_r($user_image_ids);echo('</pre>');
     foreach (array_keys($user_image_ids) as $user_image_id)
     {
       if(in_array($user_image_id.'_'.$user_id,array_keys($notifications_sent)))
       {
         continue;
       }
-      // echo('<pre> user_image_id');print_r($user_image_id);echo('</pre>');
       foreach ($images as $image)
-      // echo('<pre> image');print_r($image);echo('</pre>');
       {
         if ($user_image_id = $image["id"])
         {
@@ -287,7 +271,7 @@ SELECT
     if (count($notification_history) > 0)
     {
       $keyargs_content = array(
-        get_l10n_args("You have recieved this email because you previously downloaded these photos that will expire: %s", $image_info),
+        get_l10n_args("You have recieved this email because you previously downloaded these photos they will soon expire: %s", $image_info),
       );
 
       $subject = l10n('Expiry date, these images will expire');
@@ -303,12 +287,10 @@ SELECT
           'content_format' => 'text/plain',
         )
       );
+
+      //add notification to notification history
+      add_notification_history($notification_history);
     }
   } 
 
-  //add notification to notification history
-  if (count($notification_history) > 0)
-  {
-    add_notification_history($notification_history);
-  }
 }
