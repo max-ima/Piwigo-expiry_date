@@ -98,7 +98,7 @@ function expiry_date_init_actions()
   $query = '
 SELECT id, file
   FROM '.IMAGES_TABLE.'
-    WHERE expiry_date
+  WHERE expiry_date
 ;';
 
   $expiry_date_images = query2array($query, 'id', 'file');
@@ -131,7 +131,8 @@ SELECT id, file
     $query = '
 SELECT id, file, name, author, expiry_date
   FROM '.IMAGES_TABLE.'
-  WHERE expiry_date <= NOW()
+  WHERE id IN ('.implode(',', array_keys($expiry_date_images)).')
+    AND expiry_date <= NOW()
 ;';
 
   $result = pwg_query($query);
@@ -141,8 +142,8 @@ SELECT id, file, name, author, expiry_date
 
   while ($row = pwg_db_fetch_assoc($result))
   {
-    array_push($images,$row);
-    array_push($image_ids,$row['id']);
+    array_push($images, $row);
+    array_push($image_ids, $row['id']);
   }
 
   if (empty($image_ids))

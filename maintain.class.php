@@ -3,6 +3,15 @@ defined('PHPWG_ROOT_PATH') or die('Hacking attempt!');
 
 class expiry_date_maintain extends PluginMaintain
 {
+  private $default_conf = array(
+    'expd_action' => 'nothing',
+    'expd_archive_album' => null,
+    'expd_notify' => false,
+    'expd_notify_before_option' => 'none',
+    'expd_notify_admin' => false,
+    'expd_notify_admin_before_option' => 'none',
+    );
+
   private $installed = false;
  
   function __construct($plugin_id)
@@ -47,24 +56,43 @@ class expiry_date_maintain extends PluginMaintain
       `image_id` int(11) NOT NULL,
       `send_date` DATETIME,
       `email_used` varchar(64),
+      `email_uuid` varchar(10),
       PRIMARY KEY (`id`),
       FOREIGN KEY(image_id) REFERENCES '.IMAGES_TABLE.'(id),
       FOREIGN KEY(user_id) REFERENCES '.USERS_TABLE.'(id)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8
     ;');
 
+    // add a new column to existing table
+    $result = pwg_query('SHOW COLUMNS FROM `'.$this->table.'` LIKE "email_uuid";');
+    if (!pwg_db_num_rows($result))
+    {
+      pwg_query('ALTER TABLE `' . $this->table . '` ADD `email_uuid` varchar(10);');
+    }
+
     if (!isset($conf['expiry_date']))
     {
-      $expiry_date_default_config = array(
-        'expd_action' => 'nothing',
-        'expd_archive_album' => null,
-        'expd_notify' => false,
-        'expd_notify_before_option' => 'none',
-        'expd_notify_admin' => false,
-        'expd_notify_admin_before_option' => 'none',
-        );
-      
-      conf_update_param('expiry_date', $expiry_date_default_config, true);
+      conf_update_param('expiry_date', $this->default_conf, true);
+    }
+    else
+    {
+      $old_conf = safe_unserialize($conf['expiry_date']);
+
+      $additional_conf_fields = array(
+        'expd_notify_before_option',
+        'expd_notify_admin',
+        'expd_notify_admin_before_option',
+      );
+
+      foreach ($additional_conf_fields as $fieldname)
+      {
+        if (empty($old_conf[$fieldname]))
+        { // use case: this parameter was added in a new version
+          $old_conf[$fieldname] = $this->default_conf[$fieldname];
+        }
+      }
+
+      conf_update_param('expiry_date', $old_conf, true);
     }
   }
 
