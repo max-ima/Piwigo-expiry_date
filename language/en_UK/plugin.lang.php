@@ -1,7 +1,7 @@
 <?php
 $lang['Expiry date'] ='Expiry date';
 $lang['expired on'] ='Expired on';
-$lang['in'] ='in';
+$lang['%s, in %s days'] ='%s, in %s days ';
 
 // Batch manager
 $lang['Expiring photos'] = 'Expiring photos';
@@ -32,6 +32,9 @@ $lang['No action was taken on these images'] = 'No action was taken on these ima
 $lang['You have expiring photos'] = 'You have expiring photos';
 $lang['You have recieved this email because you previously downloaded these photos: %s'] = 'You have received this email because you previously downloaded these photos: %s';
 $lang['These photo have reached their expiry date.'] = 'These photos have reached their expiry date.';
+
+//prenotification
+$lang['Expiry date, these images will expire'] = 'Expiry date, these images will expire';
 
 
 ?>
