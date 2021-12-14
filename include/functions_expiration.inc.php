@@ -86,10 +86,9 @@ SELECT
     }
   }
 
-  pwg_mail_notification_admins($subject, $keyargs_content, false);
-
   if (count($admin_notification_history) > 0)
   {
+    pwg_mail_notification_admins($subject, $keyargs_content, false);
     add_notification_history($admin_notification_history);
   }
 
