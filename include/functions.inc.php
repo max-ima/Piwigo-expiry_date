@@ -5,13 +5,10 @@
  * keep track of what notification sent to who
  */
 
-function addNotificationHistory($notifications)
+function add_notification_history($notifications)
 {
-  global $prefixeTable;
-  // echo('<pre>');print_r($notifications);echo('</pre>');
-
   mass_inserts(
-    $prefixeTable.'expd_notifications',
+    EXPIRY_DATE_NOTIFICATIONS_TABLE,
     array_keys($notifications[0]),
     $notifications
   );
