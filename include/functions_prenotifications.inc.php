@@ -130,8 +130,6 @@ function send_prenotifications_user()
 {
   global $conf;
 
-  $notification_history = array();
-
   //Check if either admin or user prenotification is set
   if ('none' == $conf['expiry_date']['expd_notify_before_option'])
   {
@@ -150,30 +148,18 @@ SELECT
   WHERE expiry_date BETWEEN ADDDATE(NOW(), INTERVAL 2 DAY) AND ADDDATE(NOW(), INTERVAL '.$conf['expiry_date']['expd_notify_before_option'].' DAY);
 ;';
 
-  $result = pwg_query($query);
+  $images = query2array($query, 'id');
 
-  $imagesDetails = array();
-  $image_ids = array();
-
-  while ($row = pwg_db_fetch_assoc($result))
-  {
-    $prenotify_before = strtotime('-'.$conf['expiry_date']['expd_notify_before_option'], strtotime($row['expiry_date']));
-    $row['prenotification_date'] = $prenotify_before;
-    $limitprenotification = strtotime("-2days", strtotime($row['expiry_date']));
-    $row['limit_prenotification'] = $limitprenotification;
-    array_push($imagesDetails,$row);
-    array_push($image_ids,$row['id']);
-  }
-
-  if (empty($imagesDetails))
+  if (empty($images))
   {
     return;
   }
 
+  //Get history of who downloaded which image
   $query = '
 SELECT user_id, image_id
   FROM '.HISTORY_TABLE.'
-  WHERE image_id IN ('.implode(',',$image_ids).')
+  WHERE image_id IN ('.implode(',', array_keys($images)).')
     AND image_type = \'high\'
 ;';
         
@@ -185,10 +171,17 @@ SELECT user_id, image_id
     @$user_history[$history_line['user_id']][$history_line['image_id']]++;
   }
 
+  echo('<pre> history_lines');print_r($history_lines);echo('</pre>');
+  echo('<pre> user_history');print_r($user_history);echo('</pre>');
+
   $user_ids = array_keys($user_history);
-        
-  if (!empty($user_ids))
+       
+  echo('<pre> user_ids');print_r($user_ids);echo('</pre>');
+  if (empty($user_ids))
   {
+    return;
+  }
+    
     $query = '
 SELECT 
 '.$conf['user_fields']['id'].' AS id,
@@ -197,20 +190,26 @@ FROM '.USERS_TABLE.'
 WHERE '.$conf['user_fields']['id'].' IN ('.implode(',',$user_ids).')
   AND `'.$conf['user_fields']['email'].'` IS NOT NULL
 ;';
+
   $email_of_user = query2array($query, 'id', 'email');
+
+  echo('<pre> email_of_user');print_r($email_of_user);echo('</pre>');
       
-    if (count($email_of_user) > 0)
-    {
-      $query = '
+  if (count($email_of_user) < 0)
+  {
+    return;
+  }
+
+  $query = '
 SELECT
 user_id, language
 FROM '.USER_INFOS_TABLE.'
 WHERE user_id IN ('.implode(',', $user_ids).')
 ;';
-      $language_of_user = query2array($query, 'user_id', 'language');
-    }
-  }
 
+  $language_of_user = query2array($query, 'user_id', 'language');
+  echo('<pre> language_of_user');print_r($language_of_user);echo('</pre>');
+  
   $query = '
 SELECT
     image_id,
@@ -218,21 +217,22 @@ SELECT
     send_date
   FROM '.EXPIRY_DATE_NOTIFICATIONS_TABLE.'
   WHERE send_date > SUBDATE(NOW(), INTERVAL '.$conf['expiry_date']['expd_notify_before_option'].' DAY)
-    AND image_id IN ('.implode(',', $image_ids).')
-    AND type = \'prenotification_'.$conf['expiry_date']['expd_notify_before_option'].'\'
+    AND image_id IN ('.implode(',', array_keys($images)).')
+    AND type = \'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'].'\'
 ;';
   $result = pwg_query($query);
-  $notifications_sent = array();
-  while ($row = pwg_db_fetch_assoc($result)) {
-    $notifications_sent[$row['image_id'] . '_' . $row['user_id']] = $row['send_date'];
-  }
-  // echo('<pre>');print_r($querey);echo('</pre>');
 
-  // echo('<pre>');print_r($notifications_sent);echo('</pre>');
-
-  $notification_history = array();
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
+  $email_uuid = generate_key(10);
+  $notifications_sent = array();
+  $notification_history = array();
+
+  while ($row = pwg_db_fetch_assoc($result)) {
+    $notifications_sent[$row['image_id'].'_'.$row['user_id']] = $row['send_date'];
+  }
+  echo('<pre> notifications_sent');print_r($notifications_sent);echo('</pre>');
+  
   foreach ($user_history as $user_id => $user_image_ids)
   {
     if (!isset($email_of_user[$user_id]))
@@ -240,8 +240,11 @@ SELECT
       continue;
     }
 
-    $image_to_notify = 0;
+    // echo('<pre> email_of_user');print_r($email_of_user);echo('</pre>');
+    // echo('<pre> user_id');print_r($user_id);echo('</pre>');
 
+
+      
     $recipient_language = get_default_language();
     if (isset($language_of_user[$user_id]))
     {
@@ -251,57 +254,56 @@ SELECT
     switch_lang_to($recipient_language);
 
     $image_info = "\n\n";
+    // echo('<pre> user_image_ids');print_r($user_image_ids);echo('</pre>');
     foreach (array_keys($user_image_ids) as $user_image_id)
     {
-      if (isset($notifications_sent[$user_image_id.'_'.$user_id]))
+      if(in_array($user_image_id.'_'.$user_id,array_keys($notifications_sent)))
       {
         continue;
       }
-
-      $image_info = "\n\n";
-      foreach ($imagesDetails as $image)
+      // echo('<pre> user_image_id');print_r($user_image_id);echo('</pre>');
+      foreach ($images as $image)
+      // echo('<pre> image');print_r($image);echo('</pre>');
       {
-        if ($user_image_id != $image["id"])
+        if ($user_image_id = $image["id"])
         {
-          continue;
-        } 
-
-        $image_to_notify++;  
-
-        $image_info.= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
+          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
          
-        $notification_history[] = array(
-          'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
-          'user_id' =>  $user_id,
-          'image_id' => $user_image_id,
-          'send_date' => $dbnow,
-          'email_used' => $email_of_user[$user_id],
-        );
+          $notification_history[] = array(
+            'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
+            'user_id' =>  $user_id,
+            'image_id' => $user_image_id,
+            'send_date' => $dbnow,
+            'email_used' => $email_of_user[$user_id],
+            'email_uuid' => $email_uuid,
+          );
+        }
+        
       }
-      $image_info = "\n\n";
     }
 
-    // echo ('<pre>');print_r($image_info);echo ('</pre>');
-    if ($image_to_notify == 0)
+    $image_info .= "\n";
+
+    if (count($notification_history) > 0)
     {
-      continue;
+      $keyargs_content = array(
+        get_l10n_args("You have recieved this email because you previously downloaded these photos that will expire: %s", $image_info),
+      );
+
+      $subject = l10n('Expiry date, these images will expire');
+      $content = l10n_args($keyargs_content);
+
+      switch_lang_back();
+
+      pwg_mail(
+        $email_of_user[$user_id],
+        array(
+          'subject' => $subject,
+          'content' => $content,
+          'content_format' => 'text/plain',
+        )
+      );
     }
-  
-    $subject = l10n('Expiry date, These images will expire');
-    $keyargs_content = array(
-      get_l10n_args("These images will expire: %s",$image_info)
-    );
-
-    switch_lang_back();
-
-    pwg_mail(
-      $email_of_user[$user_id],
-      array(
-        'subject' => $subject,
-        'content' => $keyargs_content,
-        'content_format' => 'text/plain',
-      )
-    );
   } 
 
   //add notification to notification history
