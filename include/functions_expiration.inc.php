@@ -7,7 +7,7 @@ include_once(EXPIRY_DATE_PATH.'include/functions.inc.php');
 /**
  * Notify admins of image expiration
  */
-function notifyAdmins($images, $subject, $keyargs_content )
+function notify_admins($images, $subject, $keyargs_content )
 {
   global $conf, $user;
 
@@ -38,14 +38,44 @@ SELECT
     $admin_emails = query2array($query, 'id', 'email');
   }
 
+  $query = '
+  SELECT type, user_id, image_id 
+  FROM '.EXPIRY_DATE_NOTIFICATIONS_TABLE.'
+  ;';
+  
+  $result = pwg_query($query);
+  
+  $notifications_sent = array();
+  
+  while ($row = pwg_db_fetch_assoc($result))
+  {
+    array_push($notifications_sent,$row);
+  }
+  // echo('<pre>');print_r($notifications_sent);echo('</pre>');
+  // echo('<pre>');print_r($admin_emails);echo('</pre>');
+
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
 
   $notification_history = array();
+
+  $image_to_notify = 0;
 
   foreach ($admin_ids as $admin_id)
   {
     foreach ($images as $image)
     {
+      $notification_being_sent = array (
+        "type" => 'prenotification_admin_'.$conf['expiry_date']['expd_notify_admin_before_option'],
+        "user_id" => $admin_id,
+        "image_id" =>$image['id'],
+      );
+      // echo('<pre>notification being sent :');print_r($notification_being_sent);echo('</pre>');
+
+      if (in_array($notification_being_sent, $notifications_sent))
+      {
+        continue;
+      }
+
       $admin_notification_history[] = array(
         'type' => 'notification_admin',
         'user_id' =>  $admin_id,
@@ -60,7 +90,7 @@ SELECT
 
   if (count($admin_notification_history) > 0)
   {
-    addNotificationHistory($admin_notification_history);
+    add_notification_history($admin_notification_history);
   }
 
 }
@@ -68,7 +98,7 @@ SELECT
 /**
  * Notify users of photo expiration
  */
-function notifyUsers($image_details, $image_ids)
+function notify_users($image_details, $image_ids)
 {
   if (!isset($conf['expiry_date']['expd_notify']))
   {
@@ -179,7 +209,7 @@ SELECT
   //add notification to notification history
   if (count($notification_history) > 0)
   {
-    addNotificationHistory($notification_history);
+    add_notification_history($notification_history);
   }
 
 }

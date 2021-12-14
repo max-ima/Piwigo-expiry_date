@@ -32,6 +32,7 @@ define('EXPIRY_DATE_ID',      basename(dirname(__FILE__)));
 define('EXPIRY_DATE_PATH' ,   PHPWG_PLUGINS_PATH . EXPIRY_DATE_ID . '/');
 define('EXPIRY_DATE_DIR',     PHPWG_ROOT_PATH . PWG_LOCAL_DIR . 'expiry_date/');
 define('EXPIRY_DATE_ADMIN',   get_root_url() . 'admin.php?page=plugin-expiry_date');
+define('EXPIRY_DATE_NOTIFICATIONS_TABLE',   $prefixeTable.'expd_notifications');
 
 include_once(EXPIRY_DATE_PATH.'include/admin_events.inc.php');
 include_once(EXPIRY_DATE_PATH.'include/functions.inc.php');
@@ -60,7 +61,8 @@ function expiry_date_init()
   $conf['expiry_date'] = safe_unserialize($conf['expiry_date']);
 
   // set time between checks for expiring photos (1 day by default)
-  $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 24*60*60);
+  // $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 24*60*60);
+  $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 1);
 
   $check_expiration_date = false;
   if (isset($conf['expd_last_check']))
@@ -77,7 +79,6 @@ function expiry_date_init()
 
   if ($check_expiration_date)
   {
-
     expiry_date_init_actions();
   
     //set time last action taken on photos
@@ -92,7 +93,7 @@ function expiry_date_init_actions()
 {
   global $conf, $user;
 
-  echo('<pre>');print_r("init actions");echo('</pre>');
+  // echo('<pre>');print_r("init actions");echo('</pre>');
 
   $query = '
 SELECT id, file
@@ -108,26 +109,20 @@ SELECT id, file
     return;
   }
 
-  echo('<pre>');print_r("images with expiration date :");echo('</pre>');
-  echo('<pre>');print_r($expiry_date_images);echo('</pre>');
-
   //BEFORE EXPIRY//
 
   //  If notifications for admin is set check if prentifications need to be sent
   if (isset($conf['expiry_date']['expd_notify_admin']))
   {
-    // echo('<pre>');print_r("prenotify admins : true");echo('</pre>');
-
     //Prenotify admins of expiration,
-    sendPrenotificationsAdmin();
+    send_prenotifications_admin();
   }
  
   //If notifications is set check if prentifications need to be sent
   if (isset($conf['expiry_date']['expd_notify']))
   {
-    // echo('<pre>');print_r("prenotify users : true");echo('</pre>');
     //Prenotify user of expiration
-    sendPrenotificationsUser();
+    send_prenotifications_user();
   }      
 
   //ON EXPIRY//
@@ -150,6 +145,11 @@ SELECT id, file, name, author, expiry_date
     array_push($image_ids,$row['id']);
   }
 
+  if (empty($image_ids))
+  {
+    return;
+  }
+
   $image_details = "\n\n";
   foreach ($images as $image)
   {
@@ -159,11 +159,6 @@ SELECT id, file, name, author, expiry_date
 
   // Action taken on expiring images
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
-
-  if (!empty($image_ids))
-  {
-    return;
-  }
 
   //set email content to notify admins expiration action has taken place
   $subject = get_l10n_args("Expiry date, action has been taken");
@@ -340,17 +335,14 @@ SELECT
     );
 
   }
-  if (!empty($images))
+  if (isset($conf['expiry_date']['expd_notify']))
   {
-    if (isset($conf['expiry_date']['expd_notify']))
-    {
-      notifyAdmins($images, $subject, $keyargs_content );
-    }
+    notify_admins($images, $subject, $keyargs_content );
+  }
   
-    if (isset($conf['expiry_date']['expd_notify']))
-    {
-      notifyUsers($image_details, $image_ids);
-    }
+  if (isset($conf['expiry_date']['expd_notify']))
+  {
+    notify_users($image_details, $image_ids);
   }
 }
 
