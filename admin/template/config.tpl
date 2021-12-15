@@ -62,7 +62,7 @@ function showDiv(divId, element){
     <div id="expd_notify_checkbox">
         <label>
           <input type="checkbox" id="expd_notify" name="expd_notify" value="notify" {if $notifyAction}checked{/if}>
-          {'Notify downloaders of photo expiration'|translate}
+          <b>{'Notify downloaders of photo expiration'|translate}</b>
         </label>
 
         <div class="expd_notify_checkbox_details">
@@ -76,22 +76,28 @@ function showDiv(divId, element){
             <br><i>{'A set number of days before a email will be sent'|translate}</i></p>
             {html_options name=expd_notify_before_option options=$expd_prenotification_options selected=$notifyActionBeforeOption}
           </div>
+          <p>{'Add additional content to email'|translate}</p>
+          <textarea id="expd_email_content" name="expd_email_content" rows="4" cols="50">{$expd_email_content}</textarea>
         </div>
     </div> 
 
     <div id="expd_notify_admin_checkbox">
         <label>
           <input type="checkbox" id="expd_notify_admin" name="expd_notify_admin" value="notify_admins" {if $notifyActionAdmin}checked{/if}>
-          {'Notify admins of photo expiration'|translate} 
+          <b>{'Notify admins of photo expiration'|translate}</b>
         </label>
 
         <div class="expd_notify_admin_checkbox_details">
-          <i>{'On the expiry date, an email will be sent to all admins'|translate}</i>
+          <p>
+            <i>{'On the expiry date, an email will be sent to all admins'|translate}</i>
+          </p>
           <div>
             <p>{'Notify admins before the expiry date'|translate} :
             <br><i>{'A set number of days before a email will be sent'|translate}</i></p>
             {html_options name=expd_admin_notify_before_option options=$expd_prenotification_options selected=$notifyActionAdminBeforeOption}
           </div>
+          <p>{'Add additional content to email'|translate}</p>
+          <textarea id="expd_admin_email_content" name="expd_admin_email_content" rows="4" cols="50">{$expd_admin_email_content}</textarea>
         </div>
     </div> 
 

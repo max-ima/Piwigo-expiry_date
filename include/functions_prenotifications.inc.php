@@ -111,7 +111,8 @@ SELECT
     $subject =l10n('Expiry date').", ".l10n('These images will expire');
     $keyargs_content = array(
       get_l10n_args("These images will expire"),
-      get_l10n_args("%s",$image_info)
+      get_l10n_args("%s",$image_info),
+      get_l10n_args("\n".$conf['expiry_date']['expd_admin_email_content']),
     );
 
     pwg_mail_notification_admins($subject, $keyargs_content, false);
@@ -274,6 +275,7 @@ SELECT
       $keyargs_content = array(
         get_l10n_args("You have received this email because you previously downloaded these photos: %s", $image_info),
         get_l10n_args("These photos will soon expire."),
+        get_l10n_args("\n".$conf['expiry_date']['expd_email_content']),
       );
 
       $subject =l10n('Expiry date').", ".l10n('These images will expire');

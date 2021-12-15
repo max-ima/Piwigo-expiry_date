@@ -10,6 +10,8 @@ class expiry_date_maintain extends PluginMaintain
     'expd_notify_before_option' => 'none',
     'expd_notify_admin' => false,
     'expd_notify_admin_before_option' => 'none',
+    'expd_email_content' => '',
+    'expd_admin_email_content' => '',
     );
 
   private $installed = false;
@@ -82,6 +84,8 @@ class expiry_date_maintain extends PluginMaintain
         'expd_notify_before_option',
         'expd_notify_admin',
         'expd_notify_admin_before_option',
+        'expd_email_content',
+        'expd_admin_email_content',
       );
 
       foreach ($additional_conf_fields as $fieldname)
