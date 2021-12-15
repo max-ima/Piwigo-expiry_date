@@ -72,10 +72,10 @@ $template->assign(
 $template->assign(
   'expd_prenotification_options',
   array(
-    'none' => 'No prenotification',
-    '7' => '7 days before expiry',
-    '14' => '14 days before expiry',
-    '30' => '30 days before expiry',
+    'none' => l10n('No prenotification'),
+    '7' => l10n('7 days before expiry'),
+    '14' => l10n('14 days before expiry'),
+    '30' => l10n('30 days before expiry'),
   )
 );
 

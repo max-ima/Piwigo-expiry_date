@@ -72,8 +72,8 @@ function showDiv(divId, element){
             <br>{'To change this setting go to:'|translate} {'Configuration'|translate} &raquo; {'Options'|translate} &raquo; {'General'|translate} &raquo; {'Miscellaneous'|translate} &raquo; {'Save visits in history for'|translate}
           </p>
           <div>
-            <p>Notify users before the expiry date :
-            <br><i>A set number of days before a email will be sent to notifiy that photos are expiring in the futur</i></p>
+            <p>{'Notify users before the expiry date'|translate} :
+            <br><i>{'A set number of days before a email will be sent'|translate}</i></p>
             {html_options name=expd_notify_before_option options=$expd_prenotification_options selected=$notifyActionBeforeOption}
           </div>
         </div>
@@ -82,14 +82,14 @@ function showDiv(divId, element){
     <div id="expd_notify_admin_checkbox">
         <label>
           <input type="checkbox" id="expd_notify_admin" name="expd_notify_admin" value="notify_admins" {if $notifyActionAdmin}checked{/if}>
-          Notify admins of photo expiration
+          {'Notify admins of photo expiration'|translate} 
         </label>
 
         <div class="expd_notify_admin_checkbox_details">
-          <i>On the expiry date, an email will be sent to all admins</i>
+          <i>{'On the expiry date, an email will be sent to all admins'|translate}</i>
           <div>
-            <p>Notify admins before the expiry date :
-            <br><i>A set number of days before a email will be sent to notifiy that photos are expiring in the futur</i></p>
+            <p>{'Notify admins before the expiry date'|translate} :
+            <br><i>{'A set number of days before a email will be sent'|translate}</i></p>
             {html_options name=expd_admin_notify_before_option options=$expd_prenotification_options selected=$notifyActionAdminBeforeOption}
           </div>
         </div>

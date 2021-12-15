@@ -83,8 +83,9 @@ SELECT
     {
       continue;
     }
+    $url_admin =get_absolute_root_url().'admin.php?page=photo-'.$image_id;
 
-    $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
+    $image_info .= htmlentities('* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n ".$url_admin."\n\n");
 
     foreach ($admin_ids as $admin_id)
     {
@@ -107,9 +108,10 @@ SELECT
     $current_user_id = $user['id'];
     $user['id'] = -1; // make sure even the current user will get notified. Fake current user.
 
-    $subject = l10n('Expiry date, these images will expire');
+    $subject =l10n('Expiry date').", ".l10n('These images will expire');
     $keyargs_content = array(
-      get_l10n_args("These images will expire: %s",$image_info)
+      get_l10n_args("These images will expire"),
+      get_l10n_args("%s",$image_info)
     );
 
     pwg_mail_notification_admins($subject, $keyargs_content, false);
@@ -196,9 +198,10 @@ WHERE '.$conf['user_fields']['id'].' IN ('.implode(',',$user_ids).')
 
   $query = '
 SELECT
-user_id, language
-FROM '.USER_INFOS_TABLE.'
-WHERE user_id IN ('.implode(',', $user_ids).')
+    user_id,
+    language
+  FROM '.USER_INFOS_TABLE.'
+  WHERE user_id IN ('.implode(',', $user_ids).')
 ;';
 
   $language_of_user = query2array($query, 'user_id', 'language');
@@ -251,7 +254,7 @@ SELECT
       {
         if ($user_image_id = $image["id"])
         {
-          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
+          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
          
           $notification_history[] = array(
             'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
@@ -266,19 +269,18 @@ SELECT
       }
     }
 
-    $image_info .= "\n";
-
     if (count($notification_history) > 0)
     {
       $keyargs_content = array(
-        get_l10n_args("You have recieved this email because you previously downloaded these photos they will soon expire: %s", $image_info),
+        get_l10n_args("You have received this email because you previously downloaded these photos: %s", $image_info),
+        get_l10n_args("These photos will soon expire."),
       );
 
-      $subject = l10n('Expiry date, these images will expire');
+      $subject =l10n('Expiry date').", ".l10n('These images will expire');
       $content = l10n_args($keyargs_content);
 
       switch_lang_back();
-
+      
       pwg_mail(
         $email_of_user[$user_id],
         array(
@@ -291,6 +293,7 @@ SELECT
       //add notification to notification history
       add_notification_history($notification_history);
     }
+
   } 
 
 }
