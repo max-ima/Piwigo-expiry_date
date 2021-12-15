@@ -30,6 +30,7 @@ $lang['A set number of days before a email will be sent'] = 'A set number of day
 $lang['Notify admins of photo expiration'] = 'Notify admins of photo expiration';
 $lang['On the expiry date, an email will be sent to all admins'] = 'On the expiry date, an email will be sent to all admins';
 $lang['Notify admins before the expiry date'] = 'Notify admins before the expiry date';
+$lang['Add additional content to email'] = 'Add additional content to email';
 
 //Notifications + Prenotifications
 $lang['Expiry date, action has been taken'] = 'Expiry date, action has been taken';
