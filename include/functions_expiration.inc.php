@@ -45,29 +45,14 @@ SELECT
   {
     return;
   }
-
-  $query = '
-SELECT
-    DISTINCT(image_id)
-  FROM '.EXPIRY_DATE_NOTIFICATIONS_TABLE.'
-  WHERE send_date > SUBDATE(NOW(), INTERVAL 60 DAY)
-    AND image_id IN ('.implode(',', array_keys($images)).')
-    AND type = \'expiration_notification_admin\'
-  ;';
     
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
   $email_uuid = generate_key(10);
 
-  $notifications_sent = query2array($query, 'image_id');
   $notification_history = array();
 
   foreach ($images as $image_id => $image)
   {
-    if (isset($notifications_sent[$image['id']]))
-    {
-      continue;
-    }
-
     foreach ($admin_ids as $admin_id)
     {
       $notification_history[] = array(
@@ -98,9 +83,11 @@ SELECT
 /**
  * Notify users of photo expiration
  */
-function notify_users($image_details, $image_ids)
+function notify_users($images, $image_ids)
 {
-  if (!isset($conf['expiry_date']['expd_notify']))
+  global $conf, $user;
+  
+  if (!isset($conf['expiry_date']['expd_notify']) or empty($images))
   {
     return;
   }
@@ -127,7 +114,9 @@ SELECT user_id, image_id
   {
     return;
   }
-    $query = '
+
+  //Get user email
+  $query = '
 SELECT 
     '.$conf['user_fields']['id'].' AS id,
     '.$conf['user_fields']['email'].' AS email
@@ -135,13 +124,15 @@ SELECT
   WHERE '.$conf['user_fields']['id'].' IN ('.implode(',',$user_ids).')
     AND `'.$conf['user_fields']['email'].'` IS NOT NULL
 ;';
-    $email_of_user = query2array($query, 'id', 'email');
+  $email_of_user = query2array($query, 'id', 'email');
 
-  if (count($email_of_user) > 0)
+  if (count($email_of_user) < 0)
   {
     return;
   }
-    $query = '
+
+  //Get language for user
+   $query = '
 SELECT
     user_id, language
   FROM '.USER_INFOS_TABLE.'
@@ -150,27 +141,10 @@ SELECT
 
   $language_of_user = query2array($query, 'user_id', 'language');
   
-  $query = '
-  SELECT
-      image_id,
-      user_id,
-      send_date
-    FROM '.EXPIRY_DATE_NOTIFICATIONS_TABLE.'
-    WHERE send_date > SUBDATE(NOW(), INTERVAL 60 DAY)
-      AND image_id IN ('.implode(',', array_keys($images)).')
-      AND type = \'expiration_notification_user\'
-  ;';
-  $result = pwg_query($query);
-  
   list($dbnow) = pwg_db_fetch_row(pwg_query('SELECT NOW();'));
   
   $email_uuid = generate_key(10);
-  $notifications_sent = array();
   $notification_history = array();
-
-  while ($row = pwg_db_fetch_assoc($result)) {
-    $notifications_sent[$row['image_id'].'_'.$row['user_id']] = $row['send_date'];
-  }
   
   foreach ($user_history as $user_id => $user_image_ids)
   {
@@ -187,7 +161,7 @@ SELECT
 
     switch_lang_to($recipient_language);
 
-    $image_info .= "\n\n";
+    $image_info = "\n\n";
     foreach (array_keys($user_image_ids) as $user_image_id)
     {
       foreach ($images as $image)
@@ -209,7 +183,6 @@ SELECT
 
     if (count($notification_history) > 0)
     {
-
       $keyargs_content = array(
         get_l10n_args("You have recieved this email because you previously downloaded these photos: %s", $image_info),
         get_l10n_args("These photo have reached their expiry date."),
@@ -233,8 +206,5 @@ SELECT
       add_notification_history($notification_history);
     }
   } 
-
-
-
 }
  
