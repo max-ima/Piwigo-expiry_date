@@ -134,7 +134,8 @@ SELECT
   //Get language for user
    $query = '
 SELECT
-    user_id, language
+    user_id,
+    language
   FROM '.USER_INFOS_TABLE.'
   WHERE user_id IN ('.implode(',', $user_ids).')
 ;';
@@ -168,7 +169,7 @@ SELECT
       {
         if ($user_image_id = $image["id"])
         {
-          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
+          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expired on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
          
           $notification_history[] = array(
             'type' => 'expiration_notification_user',
@@ -184,14 +185,13 @@ SELECT
     if (count($notification_history) > 0)
     {
       $keyargs_content = array(
-        get_l10n_args("You have recieved this email because you previously downloaded these photos: %s", $image_info),
+        get_l10n_args("You have received this email because you previously downloaded these photos: %s", $image_info),
         get_l10n_args("These photo have reached their expiry date."),
       );
 
       $subject = l10n('You have expiring photos');
       $content = l10n_args($keyargs_content);
 
-      switch_lang_back();
 
       pwg_mail(
         $email_of_user[$user_id],

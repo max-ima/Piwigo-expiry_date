@@ -152,7 +152,7 @@ SELECT id, file, name, author, expiry_date
   $image_details = "\n\n";
   foreach ($images as $image)
   {
-    $image_details.= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), on ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
+    $image_details.= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expired on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n";
   }
   $image_details .= "\n";
 
@@ -206,8 +206,7 @@ SELECT
 
     array_push(
       $keyargs_content, array(
-        get_l10n_args('', ''),
-        get_l10n_args("Therefore these images have been deleted."),
+        l10n("\nTherefore these images have been deleted."),
       )
     );
 
@@ -295,8 +294,7 @@ SELECT
     array_push(
       $keyargs_content,
       array(
-        get_l10n_args('', ''),
-        get_l10n_args("Therefore these images have been archived in album %s", $cat_fullname),
+        get_l10n_args("\nTherefore these images have been archived in album %s", $cat_fullname),
       )
     );
 
@@ -328,8 +326,7 @@ SELECT
     array_push(
       $keyargs_content,
       array(
-        get_l10n_args('', ''),
-        get_l10n_args("No action was taken on these images.")
+        get_l10n_args("No action was taken on these images")
       )
     );
 

@@ -21,20 +21,27 @@ $lang['You must select an album for archiving photos'] = 'You must select an alb
 $lang['Do nothing'] = 'Do nothing';
 $lang['Delete expired photos'] = 'Delete expired photos';
 $lang['Archive expired photos'] = 'Archive expired photos';
+$lang['No prenotification'] = 'No prenotification';
+$lang['7 days before expiry'] = '7 days before expiry';
+$lang['14 days before expiry'] = '14 days before expiry';
+$lang['30 days before expiry'] = '30 days before expiry';
+$lang['Notify users before the expiry date'] = 'Notify users before the expiry date';
+$lang['A set number of days before a email will be sent'] = 'A set number of days before a email will be sent to notify that photos are expiring in the futur';
+$lang['Notify admins of photo expiration'] = 'Notify admins of photo expiration';
+$lang['On the expiry date, an email will be sent to all admins'] = 'On the expiry date, an email will be sent to all admins';
+$lang['Notify admins before the expiry date'] = 'Notify admins before the expiry date';
 
-//email if archive album was deleted
+//Notifications + Prenotifications
 $lang['Expiry date, action has been taken'] = 'Expiry date, action has been taken';
 $lang['These images have reached expiration: %s'] = 'These images have reached expiration: %s';
 $lang['Therefore these images have been archived in album # %s'] = 'Therefore these images have been archived in album # %s';
 $lang['No action was taken on these images'] = 'No action was taken on these images.';
-
-//email users if photos expire
 $lang['You have expiring photos'] = 'You have expiring photos';
-$lang['You have recieved this email because you previously downloaded these photos: %s'] = 'You have received this email because you previously downloaded these photos: %s';
+$lang['You have received this email because you previously downloaded these photos: %s'] = 'You have received this email because you previously downloaded these photos: %s';
 $lang['These photo have reached their expiry date.'] = 'These photos have reached their expiry date.';
-
-//prenotification
-$lang['Expiry date, these images will expire'] = 'Expiry date, these images will expire';
-
+$lang['expires on'] = 'expires on';
+$lang['expired on'] = 'expired on';
+$lang['These images will expire'] = 'These images will expire';
+$lang['These photos will soon expire.'] = 'These photo will soon expire';
 
 ?>

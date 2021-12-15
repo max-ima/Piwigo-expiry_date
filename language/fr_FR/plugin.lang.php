@@ -5,7 +5,7 @@ $lang['%s, in %s days'] ='%s, dans %s jours ';
 
 // Batch manager
 $lang['Expiring photos'] = 'Photos expirées';
-$lang['Expires in'] ='Expires dans';
+$lang['Expires in'] ='Expire dans';
 $lang['the past (already expired)'] = 'le passé (déjà expiré)';
 $lang['less than %s days'] ='Moins de %s jours';
 $lang['remove expiry date'] = 'supprimer la date d\'expiration';
@@ -21,19 +21,27 @@ $lang['You must select an album for archiving photos'] = 'Vous devez sélectionn
 $lang['Do nothing'] = 'Ne rien faire';
 $lang['Delete expired photos'] = 'Supprimer les photos expirés';
 $lang['Archive expired photos'] = 'Archiver les photos expirés';
+$lang['No prenotification'] = 'Pas de prénotification';
+$lang['7 days before expiry'] = '7 jours avant l\'expiration';
+$lang['14 days before expiry'] = '14 jours avant l\'expiration';
+$lang['30 days before expiry'] = '30 jours avant l\'expiration';
+$lang['Notify users before the expiry date'] = 'Informez les utilisateurs avant l\'expiration des photos';
+$lang['A set number of days before a email will be sent'] = 'Un nombre défini de jours avant un e-mail sera envoyé pour informer que les photos expirent dans le futur';
+$lang['Notify admins of photo expiration'] = 'Informez les adminstrateurs lors de l\'expiration des photos';
+$lang['On the expiry date, an email will be sent to all admins'] = 'A la date d\'expiration, un email sera envoyé à tous les administrateurs';
+$lang['Notify admins before the expiry date'] = 'Informez les administrateurs avant l\'expiration des photos';
 
-//email if archive album was deleted
+//Notifications + Prenotifications
 $lang['Expiry date, action has been taken'] = 'Date d\'expiration, action automatique appliquée';
 $lang['These images have reached expiration: %s']= 'Ces images sont arrivées à expiration : %s';
 $lang['Therefore these images have been archived in album %s'] = 'Par conséquent, ces images ont été archivées dans l\'album %s';
 $lang['No action was taken on these images'] = 'Aucune mesure n\'a été prise sur ces images.';
-
-//email users if photos expire
 $lang['You have expiring photos'] = 'Vous avez des photos expirées.';
-$lang['You have recieved this email because you previously downloaded these photos: %s'] = 'Vous avez reçu cet e-mail car vous avez précédemment téléchargé ces photos : %s';
+$lang['You have received this email because you previously downloaded these photos: %s'] = 'Vous avez reçu cet e-mail car vous avez précédemment téléchargé ces photos : %s';
 $lang['These photo have reached their expiry date.'] = 'Ces photos ont atteint leur date d\'expiration.';
-
-//prenotification
-$lang['Expiry date, these images will expire'] = 'Date d\expiration, ces images vont expirer';
+$lang['expires on'] = 'expire le';
+$lang['expired on'] = 'à expiré le';
+$lang['These images will expire'] = 'Ces images vont expirer';
+$lang['These photos will soon expire.'] = 'Ces images vont bientôt expirer';
 
 ?>
