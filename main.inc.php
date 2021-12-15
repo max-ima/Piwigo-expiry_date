@@ -93,8 +93,6 @@ function expiry_date_init_actions()
 {
   global $conf, $user;
 
-  // echo('<pre>');print_r("init actions");echo('</pre>');
-
   $query = '
 SELECT id, file
   FROM '.IMAGES_TABLE.'
@@ -343,7 +341,7 @@ SELECT
   
   if (isset($conf['expiry_date']['expd_notify']))
   {
-    notify_users($image_details, $image_ids);
+    notify_users($images, $image_ids);
   }
 }
 
