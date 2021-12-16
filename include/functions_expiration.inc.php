@@ -169,7 +169,7 @@ SELECT
       {
         if ($user_image_id = $image["id"])
         {
-          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expired on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
+          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expired on")." ".format_date($image["expiry_date"])."\n\n";
          
           $notification_history[] = array(
             'type' => 'expiration_notification_user',
