@@ -116,7 +116,7 @@ SELECT
     );
 
     pwg_mail_notification_admins($subject, $keyargs_content, false);
-    add_notification_history($notification_history);
+    expd_add_notification_history($notification_history);
 
     // unfake current user
     $user['id'] = $current_user_id;
@@ -293,7 +293,7 @@ SELECT
       );
 
       //add notification to notification history
-      add_notification_history($notification_history);
+      expd_add_notification_history($notification_history);
     }
 
   } 
