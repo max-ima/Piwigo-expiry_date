@@ -28,7 +28,7 @@ function expd_loc_end_picture()
     $interval = $datetime2->diff($datetime1);
     $interval = $interval->format("%r%a");
 
-    $expiry_date = strftime('%A %d  %B %G', strtotime($picture['current']['expiry_date']));
+    $expiry_date = format_date($picture['current']['expiry_date']);
     $template->assign(
       array	(
         'expiry_date' => $expiry_date,
@@ -39,7 +39,7 @@ function expd_loc_end_picture()
 
   if (isset($picture['current']['expd_expired_on']))
   {
-    $expired_on_date = strftime('%A %d  %B %G', strtotime($picture['current']['expd_expired_on']));
+    $expired_on_date = format_date($picture['current']['expd_expired_on']);
     $template->assign(
       array	(
         'expired_on_date' => $expired_on_date,

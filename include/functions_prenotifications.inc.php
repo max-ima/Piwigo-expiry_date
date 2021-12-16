@@ -85,7 +85,7 @@ SELECT
     }
     $url_admin =get_absolute_root_url().'admin.php?page=photo-'.$image_id;
 
-    $image_info .= htmlentities('* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n ".$url_admin."\n\n");
+    $image_info .= htmlentities('* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".format_date($image["expiry_date"])."\n ".$url_admin."\n\n");
 
     foreach ($admin_ids as $admin_id)
     {
@@ -255,7 +255,7 @@ SELECT
       {
         if ($user_image_id = $image["id"])
         {
-          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".strftime('%A %d %B %G', strtotime($image["expiry_date"]))."\n\n";
+          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".format_date($image["expiry_date"])."\n\n";
          
           $notification_history[] = array(
             'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
