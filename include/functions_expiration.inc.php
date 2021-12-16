@@ -73,7 +73,7 @@ SELECT
     $user['id'] = -1; // make sure even the current user will get notified
 
     pwg_mail_notification_admins($subject, $keyargs_content, false);
-    add_notification_history($notification_history);
+    expd_add_notification_history($notification_history);
 
     $user['id'] = $current_user_id;
   }
@@ -204,7 +204,7 @@ SELECT
       );
 
       //add notification to notification history
-      add_notification_history($notification_history);
+      expd_add_notification_history($notification_history);
     }
   } 
 }

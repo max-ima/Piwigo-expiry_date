@@ -61,8 +61,7 @@ function expiry_date_init()
   $conf['expiry_date'] = safe_unserialize($conf['expiry_date']);
 
   // set time between checks for expiring photos (1 day by default)
-  // $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 24*60*60);
-  $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 1);
+  $conf['expiry_date_check_period'] = conf_get_param('expiry_date_check_period', 24*60*60);
 
   $check_expiration_date = false;
   if (isset($conf['expd_last_check']))
@@ -77,13 +76,24 @@ function expiry_date_init()
     $check_expiration_date = true;
   }
 
-  if ($check_expiration_date)
+  if (!$check_expiration_date)
   {
-    expiry_date_init_actions();
-  
-    //set time last action taken on photos
-    conf_update_param('expd_last_check', date('c'));
+    return;
   }
+
+  $exec_id = expd_single_exec('expiry_date_running', 300);
+
+  if (false === $exec_id)
+  {
+    return;
+  }
+
+  expiry_date_init_actions();
+  
+  //set time last action taken on photos
+  conf_update_param('expd_last_check', date('c'));
+
+  expd_single_exec_end('expiry_date_running', $exec_id);
 }
 
 /**
