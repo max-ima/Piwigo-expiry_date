@@ -77,6 +77,7 @@ SELECT
 
   $image_info = "\n\n";
 
+  switch_lang_to(get_default_language());
   foreach ($images as $image_id => $image)
   {
     if (isset($notifications_sent[$image['id']]))
@@ -85,7 +86,7 @@ SELECT
     }
     $url_admin =get_absolute_root_url().'admin.php?page=photo-'.$image_id;
 
-    $image_info .= htmlentities('* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".format_date($image["expiry_date"])."\n ".$url_admin."\n\n");
+    $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".format_date($image["expiry_date"])."\n ".$url_admin."\n\n";
 
     foreach ($admin_ids as $admin_id)
     {
@@ -100,17 +101,15 @@ SELECT
     }
   }
 
-  $image_info .= "\n\n";
-
   if (count($notification_history) > 0)
   {
     // notify admins on expiration
     $current_user_id = $user['id'];
     $user['id'] = -1; // make sure even the current user will get notified. Fake current user.
 
-    $subject =l10n('Expiry date').", ".l10n('These images will expire');
+    $subject =l10n('Expiry date').", ".l10n('These photos will soon expire.');
     $keyargs_content = array(
-      get_l10n_args("These images will expire"),
+      get_l10n_args("These photos will soon expire."),
       get_l10n_args("%s",$image_info),
       get_l10n_args("\n".$conf['expiry_date']['expd_admin_email_content']),
     );
@@ -121,6 +120,7 @@ SELECT
     // unfake current user
     $user['id'] = $current_user_id;
   }
+  switch_lang_back();
 }
 
 /**
@@ -278,10 +278,8 @@ SELECT
         get_l10n_args("\n".$conf['expiry_date']['expd_email_content']),
       );
 
-      $subject =l10n('Expiry date').", ".l10n('These images will expire');
+      $subject =l10n('Expiry date').", ".l10n('These photos will soon expire.');
       $content = l10n_args($keyargs_content);
-
-      switch_lang_back();
       
       pwg_mail(
         $email_of_user[$user_id],
@@ -295,6 +293,8 @@ SELECT
       //add notification to notification history
       expd_add_notification_history($notification_history);
     }
+
+    switch_lang_back();
 
   } 
 

@@ -42,7 +42,6 @@ $lang['You have received this email because you previously downloaded these phot
 $lang['These photo have reached their expiry date.'] = 'These photos have reached their expiry date.';
 $lang['expires on'] = 'expires on';
 $lang['expired on'] = 'expired on';
-$lang['These images will expire'] = 'These images will expire';
 $lang['These photos will soon expire.'] = 'These photo will soon expire';
 
 ?>

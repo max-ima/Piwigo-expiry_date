@@ -51,6 +51,8 @@ SELECT
 
   $notification_history = array();
 
+  switch_lang_to(get_default_language());
+
   foreach ($images as $image_id => $image)
   {
     foreach ($admin_ids as $admin_id)
@@ -77,6 +79,7 @@ SELECT
 
     $user['id'] = $current_user_id;
   }
+  switch_lang_back();
 
 }
 
@@ -193,7 +196,6 @@ SELECT
       $subject = l10n('You have expiring photos');
       $content = l10n_args($keyargs_content);
 
-
       pwg_mail(
         $email_of_user[$user_id],
         array(
@@ -206,6 +208,8 @@ SELECT
       //add notification to notification history
       expd_add_notification_history($notification_history);
     }
+
+    switch_lang_back();
   } 
 }
  
