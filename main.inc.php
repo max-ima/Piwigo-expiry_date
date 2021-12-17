@@ -159,6 +159,8 @@ SELECT id, file, name, author, expiry_date
     return;
   }
 
+  switch_lang_to(get_default_language());
+
   $image_details = "\n\n";
   foreach ($images as $image)
   {
@@ -344,6 +346,9 @@ SELECT
     );
 
   }
+
+  switch_lang_back();
+
   if (isset($conf['expiry_date']['expd_notify']))
   {
     notify_admins($images, $subject, $keyargs_content );
