@@ -156,7 +156,7 @@ SELECT
     {
       continue;
     }
-    
+
     $recipient_language = get_default_language();
     if (isset($language_of_user[$user_id]))
     {
@@ -211,7 +211,11 @@ SELECT
 
     switch_lang_back();
   } 
-  //add notification to notification history
-  expd_add_notification_history($notification_history);
+
+  if (count($notification_history) > 0)
+  {
+    //add notification to notification history
+    expd_add_notification_history($notification_history);
+  }
 }
  

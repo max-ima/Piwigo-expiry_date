@@ -293,7 +293,10 @@ SELECT
     }
     switch_lang_back();
   } 
-  
-  //add notification to notification history
-  expd_add_notification_history($notification_history);
+
+  if (count($notification_history) > 0)
+  {
+    //add notification to notification history
+    expd_add_notification_history($notification_history);
+  }
 }
