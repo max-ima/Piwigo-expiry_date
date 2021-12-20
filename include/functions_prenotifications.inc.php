@@ -251,21 +251,23 @@ SELECT
       {
         continue;
       }
+      $url_admin =get_absolute_root_url().'admin.php?page=photo-'.$user_image_id;
       foreach ($images as $image)
       {
         if ($user_image_id != $image["id"])
         {
           continue;
         }
+        $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".format_date($image["expiry_date"])."\n ".$url_admin."\n\n";
          
-          $notification_history[] = array(
-            'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
-            'user_id' =>  $user_id,
-            'image_id' => $user_image_id,
-            'send_date' => $dbnow,
-            'email_used' => $email_of_user[$user_id],
-            'email_uuid' => $email_uuid,
-          );
+        $notification_history[] = array(
+          'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
+          'user_id' =>  $user_id,
+          'image_id' => $user_image_id,
+          'send_date' => $dbnow,
+          'email_used' => $email_of_user[$user_id],
+          'email_uuid' => $email_uuid,
+        );
       }
     }
 
