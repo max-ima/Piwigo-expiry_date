@@ -170,18 +170,19 @@ SELECT
     {
       foreach ($images as $image)
       {
-        if ($user_image_id = $image["id"])
+        if ($user_image_id != $image["id"])
         {
-          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expired on")." ".format_date($image["expiry_date"])."\n\n";
-         
-          $notification_history[] = array(
-            'type' => 'expiration_notification_user',
-            'user_id' =>  $user_id,
-            'image_id' => $user_image_id,
-            'send_date' => $dbnow,
-            'email_used' => $email_of_user[$user_id],
-          );
+          continue;
         }
+        $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expired on")." ".format_date($image["expiry_date"])."\n\n";
+         
+        $notification_history[] = array(
+          'type' => 'expiration_notification_user',
+          'user_id' =>  $user_id,
+          'image_id' => $user_image_id,
+          'send_date' => $dbnow,
+          'email_used' => $email_of_user[$user_id],
+        );
       }
     }
 

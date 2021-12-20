@@ -253,9 +253,10 @@ SELECT
       }
       foreach ($images as $image)
       {
-        if ($user_image_id = $image["id"])
+        if ($user_image_id != $image["id"])
         {
-          $image_info .= '* '.$image["name"].' '.$image["author"].' ('.$image["file"]."), ".l10n("expires on")." ".format_date($image["expiry_date"])."\n\n";
+          continue;
+        }
          
           $notification_history[] = array(
             'type' => 'prenotification_user_'.$conf['expiry_date']['expd_notify_before_option'],
@@ -265,8 +266,6 @@ SELECT
             'email_used' => $email_of_user[$user_id],
             'email_uuid' => $email_uuid,
           );
-        }
-        
       }
     }
 
