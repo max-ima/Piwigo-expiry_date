@@ -290,13 +290,10 @@ SELECT
           'content_format' => 'text/plain',
         )
       );
-
-      //add notification to notification history
-      expd_add_notification_history($notification_history);
     }
-
     switch_lang_back();
-
   } 
-
+  
+  //add notification to notification history
+  expd_add_notification_history($notification_history);
 }

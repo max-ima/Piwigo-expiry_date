@@ -156,7 +156,7 @@ SELECT
     {
       continue;
     }
-
+    
     $recipient_language = get_default_language();
     if (isset($language_of_user[$user_id]))
     {
@@ -182,7 +182,9 @@ SELECT
           'image_id' => $user_image_id,
           'send_date' => $dbnow,
           'email_used' => $email_of_user[$user_id],
+          'email_uuid' => $email_uuid,
         );
+
       }
     }
 
@@ -205,12 +207,11 @@ SELECT
           'content_format' => 'text/plain',
         )
       );
-
-      //add notification to notification history
-      expd_add_notification_history($notification_history);
     }
 
     switch_lang_back();
   } 
+  //add notification to notification history
+  expd_add_notification_history($notification_history);
 }
  
