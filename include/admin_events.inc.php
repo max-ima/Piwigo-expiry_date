@@ -108,11 +108,32 @@ function expd_batch_manager_perform_filters($filter_sets)
 {
   if (isset($_SESSION['bulk_manager_filter']['expiry_date_option']))
   {
-    $query = '
-SELECT id 
-  FROM '.IMAGES_TABLE.'
-  WHERE expiry_date < ADDDATE(NOW(), INTERVAL '.$_SESSION['bulk_manager_filter']['expiry_date_option'].' DAY)
-;';
+    if (0 == $_SESSION['bulk_manager_filter']['expiry_date_option'])
+    {
+      $query = '
+      SELECT id 
+        FROM '.IMAGES_TABLE.'
+        WHERE ISNULL(expiry_date) 
+          AND expd_expired_on
+      ;';
+    }
+    else if (31 == $_SESSION['bulk_manager_filter']['expiry_date_option'])
+    {
+      $query = '
+      SELECT id 
+        FROM '.IMAGES_TABLE.'
+        WHERE expiry_date > ADDDATE(NOW(), INTERVAL 30 DAY)
+      ;';
+    }
+    else
+    {
+      $query = '
+      SELECT id 
+        FROM '.IMAGES_TABLE.'
+        WHERE expiry_date < ADDDATE(NOW(), INTERVAL '.$_SESSION['bulk_manager_filter']['expiry_date_option'].' DAY)
+      ;';
+    }
+    
     $filter_sets[] = query2array($query, null, 'id');
   }
 

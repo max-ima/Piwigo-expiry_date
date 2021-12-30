@@ -8,6 +8,7 @@ $lang['Expiring photos'] = 'Photos expirées';
 $lang['Expires in'] ='Expire dans';
 $lang['the past (already expired)'] = 'le passé (déjà expiré)';
 $lang['less than %s days'] ='Moins de %s jours';
+$lang['more than than %s days'] = 'Plus de %s jours';
 $lang['remove expiry date'] = 'supprimer la date d\'expiration';
 
 // config.tpl
@@ -41,7 +42,7 @@ $lang['You have expiring photos'] = 'Vous avez des photos expirées.';
 $lang['You have received this email because you previously downloaded these photos: %s'] = 'Vous avez reçu cet e-mail car vous avez précédemment téléchargé ces photos : %s';
 $lang['These photo have reached their expiry date.'] = 'Ces photos ont atteint leur date d\'expiration.';
 $lang['expires on'] = 'expire le';
-$lang['expired on'] = 'à expiré le';
+$lang['expired on'] = 'A expiré le';
 $lang['These photos will soon expire.'] = 'Ces images vont bientôt expirer';
 
 ?>
