@@ -46,6 +46,7 @@ function showDiv(divId, element){
   <form method="post" action="{$F_ACTION}">
 
     <div id="expd_options">
+      <legend><span class="icon-clock icon-blue"></span>{'Action on expiration'|translate}</legend>
       <div id="expd_action_select">
         <label for="expd_actions"><strong>{'What should piwigo do once photos expire'|translate}</strong></label>
 {html_radios name=expd_actions options=$expd_actions_options selected=$selectedAction onchange="showDiv('expd_archive_album_choice', this)"}
@@ -60,6 +61,7 @@ function showDiv(divId, element){
 
 
     <div id="expd_notify_checkbox">
+      <legend><span class="icon-users-1 icon-yellow"></span>{'User notifications'|translate}</legend>
         <label>
           <input type="checkbox" id="expd_notify" name="expd_notify" value="notify" {if $notifyAction}checked{/if}>
           <b>{'Notify downloaders of photo expiration'|translate}</b>
@@ -82,6 +84,7 @@ function showDiv(divId, element){
     </div> 
 
     <div id="expd_notify_admin_checkbox">
+    <legend><span class="icon-users-cog icon-purple"></span>{'Administrator notifications'|translate} <span class="adminOnlyIcon tiptip"><i class="icon-users"></i> administrators</span></legend> 
         <label>
           <input type="checkbox" id="expd_notify_admin" name="expd_notify_admin" value="notify_admins" {if $notifyActionAdmin}checked{/if}>
           <b>{'Notify admins of photo expiration'|translate}</b>

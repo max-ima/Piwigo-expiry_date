@@ -75,3 +75,16 @@ input[type="radio"],
 input[type="checkbox"]{
   margin-right:5px;
 }
+
+legend{
+  margin-bottom:20px;
+  margin-top:40px;
+}
+
+.adminOnlyIcon {
+  background-color: #ddd;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 90%;
+  color: #777;
+}
