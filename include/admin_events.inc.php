@@ -15,6 +15,16 @@ function expd_loc_end_picture_modify()
   }
   $template->assign(array('EXPIRY_DATE'=>$page['image']['expiry_date']));
 
+  if (isset($page['image']['expd_expired_on']))
+  {
+    $expired_on_date = format_date($page['image']['expd_expired_on']);
+    $template->assign(
+      array	(
+        'expired_on_date' => $expired_on_date,
+      )
+    );
+  }
+
   $template->set_prefilter('picture_modify', 'expd_picture_modify_prefilter');
   $template->set_filename('expiry_date_picture_modify', realpath(EXPIRY_DATE_PATH.'picture_modify.tpl'));
   $template->assign_var_from_handle('EXPD_PICTURE_MODIFY_CONTENT', 'expiry_date_picture_modify');

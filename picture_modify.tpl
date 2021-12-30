@@ -1,5 +1,5 @@
 <p>
-  <strong>{"Expiry date"|translate}</strong>
+  <strong>{"Expiry date"|translate}</strong>{if $expired_on_date != null} ({"expired on"|@translate} {$expired_on_date}){/if}
   <br>
   <input type="hidden" name="expiry_date" value="{$EXPIRY_DATE}">
   <label class="date-input">
