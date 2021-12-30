@@ -84,7 +84,7 @@ function showDiv(divId, element){
     </div> 
 
     <div id="expd_notify_admin_checkbox">
-    <legend><span class="icon-users-cog icon-purple"></span>{'Administrator notifications'|translate} <span class="adminOnlyIcon tiptip"><i class="icon-users"></i> administrators</span></legend> 
+    <legend><span class="icon-users-cog icon-purple"></span>{'Administrator notifications'|translate} <span class="adminOnlyIcon"><i class="icon-users"></i> administrators</span></legend> 
         <label>
           <input type="checkbox" id="expd_notify_admin" name="expd_notify_admin" value="notify_admins" {if $notifyActionAdmin}checked{/if}>
           <b>{'Notify admins of photo expiration'|translate}</b>
