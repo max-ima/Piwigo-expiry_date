@@ -193,7 +193,7 @@ SELECT
       $keyargs_content = array(
         get_l10n_args("You have received this email because you previously downloaded these photos: %s", $image_info),
         get_l10n_args("These photo have reached their expiry date."),
-        get_l10n_args("\n".$conf['expiry_date']['expd_email_content']),
+        get_l10n_args("\n".$conf['expd_email_content']),
       );
 
       $subject = l10n('You have expiring photos');

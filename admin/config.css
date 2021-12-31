@@ -14,10 +14,13 @@
   text-align: left;
 }
 
-#expd_options,
 #expd_notify_checkbox,
 #expd_save_config{
   margin-top:30px;
+}
+
+#expd_options{
+  margin-top:20px;
 }
 
 #expd_options label{
@@ -79,6 +82,10 @@ input[type="checkbox"]{
 legend{
   margin-bottom:20px;
   margin-top:40px;
+}
+
+#expd_options legend{
+  margin-top:0;
 }
 
 .adminOnlyIcon {

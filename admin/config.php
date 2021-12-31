@@ -25,10 +25,11 @@ if (!empty($_POST))
     'expd_notify' => isset($_POST["expd_notify"]) ? true : false,
     'expd_notify_before_option'=> $_POST['expd_notify_before_option'],
     'expd_notify_admin' => isset($_POST["expd_notify_admin"]) ? true : false,
-    'expd_notify_admin_before_option'=> $_POST['expd_admin_notify_before_option'],  
-    'expd_email_content'=> $_POST['expd_email_content'],  
-    'expd_admin_email_content'=> $_POST['expd_admin_email_content'],  
+    'expd_notify_admin_before_option'=> $_POST['expd_admin_notify_before_option'],   
   );
+
+  $conf['expd_email_content'] = $_POST['expd_email_content'];
+  $conf['expd_admin_email_content'] = $_POST['expd_admin_email_content'];
   
   if (null == $_POST['selected_category'] and 'archive' == $_POST['expd_actions'])
   {
@@ -37,6 +38,8 @@ if (!empty($_POST))
   else
   {
     conf_update_param('expiry_date',  $conf['expiry_date'], true);
+    conf_update_param('expd_email_content',  trim($conf['expd_email_content']), true);
+    conf_update_param('expd_admin_email_content',  trim($conf['expd_admin_email_content']), true);
     array_push($page['infos'], l10n('Expiry date configuration saved'));
   }
 }
@@ -54,8 +57,8 @@ if (isset($conf['expiry_date']['expd_archive_album']))
   $selected_category = array($conf['expiry_date']['expd_archive_album']);
 }
 $template->assign('selected_category', $selected_category);
-$template->assign('expd_email_content',$conf['expiry_date']['expd_email_content']);
-$template->assign('expd_admin_email_content', $conf['expiry_date']['expd_admin_email_content']);
+$template->assign('expd_email_content', stripslashes($conf['expd_email_content']));
+$template->assign('expd_admin_email_content', stripslashes($conf['expd_admin_email_content']));
 
 
 // +-----------------------------------------------------------------------+
