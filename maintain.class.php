@@ -10,7 +10,6 @@ class expiry_date_maintain extends PluginMaintain
     'expd_notify_before_option' => 'none',
     'expd_notify_admin' => false,
     'expd_notify_admin_before_option' => 'none',
-
   );
 
   private $installed = false;
@@ -74,8 +73,6 @@ class expiry_date_maintain extends PluginMaintain
     if (!isset($conf['expiry_date']))
     {
       conf_update_param('expiry_date', $this->default_conf, true);
-      conf_update_param('expd_email_content', null, true);
-      conf_update_param('expd_admin_email_content', null, true);
     }
     else
     {
@@ -96,6 +93,16 @@ class expiry_date_maintain extends PluginMaintain
       }
 
       conf_update_param('expiry_date', $old_conf, true);
+    }
+
+    if (!isset($conf['expd_email_content']))
+    {
+      conf_update_param('expd_email_content', null, true);
+    }
+
+    if (!isset($conf['expd_admin_email_content']))
+    {
+      conf_update_param('expd_admin_email_content', null, true);
     }
   }
 

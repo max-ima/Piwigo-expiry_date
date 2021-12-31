@@ -34,7 +34,7 @@ $lang['Notify admins before the expiry date'] = 'Informez les administrateurs av
 $lang['Add additional content to email'] = 'Ajouter un contenu supplémentaire au mails';
 $lang['Action on expiration'] = 'Action lors de expiration';
 $lang['User notifications'] = 'Notifications utilisateurs';
-$lang['Administrators notifications'] = 'Notifications administrateurs';
+$lang['Administrator notifications'] = 'Notifications administrateurs';
 
 //Notifications + Prenotifications
 $lang['Expiry date, action has been taken'] = 'Date d\'expiration, action automatique appliquée';
