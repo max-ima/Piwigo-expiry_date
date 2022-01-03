@@ -15,7 +15,7 @@ function expd_loc_end_picture_modify()
   }
   $template->assign(array('EXPIRY_DATE'=>$page['image']['expiry_date']));
 
-  if (isset($page['image']['expd_expired_on']))
+  if (isset($page['image']['expd_expired_on']) and !isset($page['image']['expiry_date']))
   {
     $expired_on_date = format_date($page['image']['expd_expired_on']);
     $template->assign(

@@ -37,7 +37,7 @@ function expd_loc_end_picture()
     );
   }
 
-  if (isset($picture['current']['expd_expired_on']))
+  if (isset($picture['current']['expd_expired_on']) and !isset($picture['current']['expiry_date']))
   {
     $expired_on_date = format_date($picture['current']['expd_expired_on']);
     $template->assign(
