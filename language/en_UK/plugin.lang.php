@@ -47,5 +47,6 @@ $lang['These photo have reached their expiry date.'] = 'These photos have reache
 $lang['expires on'] = 'expires on';
 $lang['expired on'] = 'expired on';
 $lang['These photos will soon expire.'] = 'These photo will soon expire';
+$lang['Expiry date configuration saved'] = 'Expiry date configuration saved';
 
 ?>
