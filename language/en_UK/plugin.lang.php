@@ -33,5 +33,5 @@ $lang['You have expiring photos'] = 'You have expiring photos';
 $lang['You have recieved this email because you previously downloaded these photos: %s'] = 'You have received this email because you previously downloaded these photos: %s';
 $lang['These photo have reached their expiry date.'] = 'These photos have reached their expiry date.';
 
-
+$lang['Expiry date configuration saved'] = 'Expiry date configuration saved';
 ?>
